@@ -30,6 +30,7 @@ import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.neong.voice.example.HappeningTodayConversation;
 import com.neong.voice.example.KnockKnockConversation;
 import com.neong.voice.example.WhatsHappeningConversation;
+import com.neong.voice.wolfpack.LobosWeeklySpecialsConversation;
 import com.neong.voice.model.base.Conversation;
 
 /**
@@ -68,6 +69,7 @@ public class TemplateBaseSkillSpeechlet implements Speechlet {
         supportedConversations.add(new HappeningTodayConversation());
         supportedConversations.add(new KnockKnockConversation());
         supportedConversations.add(new WhatsHappeningConversation());
+        supportedConversations.add(new LobosWeeklySpecialsConversation());
         
         
         //Populate a map of supported intents to conversations for later dispatch

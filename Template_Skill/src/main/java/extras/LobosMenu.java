@@ -34,7 +34,7 @@ public class LobosMenu {
 	 *                  specials. It must either be "day" or "night". Anything
 	 *                  else will cause the function to not work properly.
 	 */
-	public static String getDaySpecialsForWeek(int weekNum, String timeOfDay){
+	public static String getSpecialsForWeek(int weekNum, String timeOfDay){
 		
 		int cycleNum = getCycleNum(weekNum);
 		

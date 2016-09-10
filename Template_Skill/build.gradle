@@ -39,6 +39,12 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.10'
 
     compile 'org.scala-lang:scala-library:2.11.1'
+
+    testCompile 'org.testng:testng:6.8.8'
+}
+
+test {
+    useTestNG()
 }
 
 task fatJar(type: Jar) {

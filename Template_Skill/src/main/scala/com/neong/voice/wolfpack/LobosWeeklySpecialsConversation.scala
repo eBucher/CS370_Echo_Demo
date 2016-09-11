@@ -19,8 +19,8 @@ class LobosWeeklySpecialsConversation extends Conversation {
     intentReq: IntentRequest,
     session: Session
   ): SpeechletResponse = {
-    val intentName = (intentReq getIntent) getName
-    val conversationIntent = ConversationIntent withName intentName
+    val intentName = intentReq.getIntent.getName
+    val conversationIntent = ConversationIntent.withName(intentName)
 
     val responseText = conversationIntent match {
 

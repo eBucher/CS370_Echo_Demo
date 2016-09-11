@@ -71,7 +71,7 @@ class LobosMenu {
 
 
 	/**
-	 * @Return the cycle number that corresponds with the weekNum that was passed
+	 * @return the cycle number that corresponds with the weekNum that was passed
 	 * to the function. If there is not a cycle for the given week, then
 	 * the function will return 0.
 	 *

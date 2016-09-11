@@ -65,7 +65,9 @@ LobosWeeklySpecialsIntent what is the special of the week
 
 LobosWeeklySpecialsDayIntent give me that daily special biatch
 LobosWeeklySpecialsDayIntent what is the daily special
-LobosWeeklySpecialsDayIntent what is are todays daily specials
+LobosWeeklySpecialsDayIntent what are the daily specials
+LobosWeeklySpecialsDayIntent what is todays daily special
+LobosWeeklySpecialsDayIntent what are todays daily specials
 LobosWeeklySpecialsDayIntent what is on the daily special this week
 LobosWeeklySpecialsDayIntent what is on the daily special today
 LobosWeeklySpecialsDayIntent what is the daily special this week
@@ -78,15 +80,19 @@ LobosWeeklySpecialsDayIntent whats on the daily special this week
 LobosWeeklySpecialsDayIntent whats the daily special today
 LobosWeeklySpecialsDayIntent whats the daily special this week
 
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
-LobosWeeklySpecialsNightIntent
+LobosWeeklySpecialsNightIntent give me that nightly special biatch
+LobosWeeklySpecialsNightIntent what is the nightly special
+LobosWeeklySpecialsNightIntent what are the nightly specials
+LobosWeeklySpecialsNightIntent what is todays nightly special
+LobosWeeklySpecialsNightIntent what are todays nightly specials
+LobosWeeklySpecialsNightIntent what is on the nightly special this week
+LobosWeeklySpecialsNightIntent what is on the nightly special today
+LobosWeeklySpecialsNightIntent what is the nightly special this week
+LobosWeeklySpecialsNightIntent what is the nightly special today
+LobosWeeklySpecialsNightIntent whats the nightly specials
+LobosWeeklySpecialsNightIntent whats on the nightly special
+LobosWeeklySpecialsNightIntent whats on the nightly special menu
+LobosWeeklySpecialsNightIntent whats on the nightly special today
+LobosWeeklySpecialsNightIntent whats on the nightly special this week
+LobosWeeklySpecialsNightIntent whats the nightly special today
+LobosWeeklySpecialsNightIntent whats the daily special this week

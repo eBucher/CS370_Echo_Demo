@@ -29,10 +29,13 @@ class LobosWeeklySpecialsConversation extends Conversation {
         "Did you want the daily or the nightly specials?"
 
       case LobosWeeklySpecialsDayIntent =>
-        "This week's specials are: " + LobosDataSource.daySpecials
+        s"The daily specials are: ${LobosDataSource.daySpecials}. " +
+          "These are available every day until 4pm."
 
       case LobosWeeklySpecialsNightIntent =>
-        "This week the evening specials are: " + LobosDataSource.nightSpecials
+        s"The nightly specials are: ${LobosDataSource.nightSpecials}. " +
+          "These are available Monday through Friday 4pm until closing, " +
+          "and all day on Saturday and Sunday."
     }
 
     val response = Conversation.newTellResponse(responseText, false)

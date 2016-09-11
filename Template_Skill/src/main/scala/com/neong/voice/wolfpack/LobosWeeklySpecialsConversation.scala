@@ -22,7 +22,7 @@ class LobosWeeklySpecialsConversation extends Conversation {
     val intentName = (intentReq getIntent) getName
     val conversationIntent = ConversationIntent withName intentName
 
-    val response = conversationIntent match {
+    val responseText = conversationIntent match {
 
       case LobosWeeklySpecialsIntent =>
         "I will need a little more information from you. " +
@@ -35,7 +35,13 @@ class LobosWeeklySpecialsConversation extends Conversation {
         "This week the evening specials are: " + LobosDataSource.nightSpecials
     }
 
-    Conversation.newTellResponse(response, false)
+    val response = Conversation.newTellResponse(responseText, false)
+
+    if (conversationIntent == LobosWeeklySpecialsIntent) {
+      response.setShouldEndSession(false)
+    }
+
+    response
   }
 }
 

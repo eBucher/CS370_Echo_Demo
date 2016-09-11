@@ -29,6 +29,15 @@
     },
     {
       "intent": "HappeningTodayIntent"
+    },
+    {
+      "intent": "LobosWeeklySpecialsIntent"
+    },
+    {
+      "intent": "LobosWeeklySpecialsDayIntent"
+    },
+    {
+      "intent": "LobosWeeklySpecialsNightIntent"
     }
   ]
 }

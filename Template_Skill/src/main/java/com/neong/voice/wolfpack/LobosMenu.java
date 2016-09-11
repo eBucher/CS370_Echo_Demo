@@ -35,7 +35,7 @@ class LobosMenu {
 		"pancetta bruschetta, an italian grilled cheese sandwich, or a steak fajita salad"
 	};
 
-	private static final String NIGHT_SPECIALS = "a cheeseburger, a veggie burger, two cartias tacos, or a quesadilla";
+	private static final String NIGHT_SPECIALS = "a cheeseburger, a veggie burger, two carnitas tacos, or a quesadilla";
 
 	private static final String NO_INFO_FOUND = "unfortunately, i was not able to find the special.";
 

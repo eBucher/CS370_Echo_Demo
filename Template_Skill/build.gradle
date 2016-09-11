@@ -8,10 +8,8 @@ sourceSets.main.java.srcDirs = []
 sourceSets.test.scala.srcDir "src/test/java"
 sourceSets.test.java.srcDirs = []
 
-compileJava {
-    targetCompatibility = JavaVersion.VERSION_1_8
-    sourceCompatibility = JavaVersion.VERSION_1_8
-}
+targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 jar {
     manifest {

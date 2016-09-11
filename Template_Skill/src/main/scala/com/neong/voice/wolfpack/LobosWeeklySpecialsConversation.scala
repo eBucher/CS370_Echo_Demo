@@ -47,7 +47,13 @@ object LobosWeeklySpecialsConversation {
     val LobosWeeklySpecialsNightIntent = Value("LobosWeeklySpecialsNightIntent")
   }
   object LobosDataSource {
-    val daySpecials = "Artichoke Crab Bruschetta, French Dip, and Classic Cobb"
-    val nightSpecials = "Cheeseburger, Veggie Burger, Carnitas Tacos, and Quesadilla"
+    import java.util.{ TimeZone, GregorianCalendar }
+    import LobosMenu.DayOrNight._
+
+    private lazy val pst = TimeZone.getTimeZone("America/Los_Angeles")
+    private lazy val date = new GregorianCalendar(pst);
+
+    lazy val daySpecials = LobosMenu.getSpecialsForDate(date, DAY)
+    lazy val nightSpecials = LobosMenu.getSpecialsForDate(date, NIGHT)
   }
 }

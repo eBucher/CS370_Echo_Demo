@@ -26,7 +26,7 @@ class LobosWeeklySpecialsConversation extends Conversation {
 
       case LobosWeeklySpecialsIntent =>
         "I will need a little more information from you. " +
-        "Did you want the daily or the nightly specials?"
+          "Did you want the daily or the nightly specials?"
 
       case LobosWeeklySpecialsDayIntent =>
         s"The daily specials are: ${LobosDataSource.daySpecials}. " +

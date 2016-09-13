@@ -13,6 +13,13 @@ class LobosMenu {
 
 	public enum DayOrNight { DAY, NIGHT }
 
+	public enum MenuItem {
+		ARTICHOKE_CRAB_BRUSCHETTA, FRENCH_DIP, CLASSIC_COB, OLIVE_TAPENADE_BRUSCHETTA, PROSCIUTTO_AND_FRESH_MOZZERLLA,
+		ASIAN_CHICKEN_SALAD, ROASTED_PORTOBELLO_MUSHROOM_BRUSCHETTA, BLT_SANDWICH, THAI_STEAK_SALAD,
+		PANCETTA_BRUSCHETTA, ITALIAN_GRILLED_CHEESE_SANDWICH, STEAK_FAJITA_SALAD, CHEESE_BURGER, VEGGIE_BURGER,
+		CARNITAS_TACOS, QUESADILLA
+	}
+
 	/*
 	 * These arrays must stay sorted for the binary search to work!
 	 *
@@ -90,6 +97,83 @@ class LobosMenu {
 
 		/* No match */
 		return 0;
+	}
+
+	public double priceCheck(MenuItem menuItem)
+	{
+		double price = 0;
+
+		switch (menuItem) {
+
+			case ARTICHOKE_CRAB_BRUSCHETTA:
+				price = 7;
+				break;
+
+			case FRENCH_DIP:
+				price = 7.5;
+				break;
+
+			case CLASSIC_COB:
+				price = 7;
+				break;
+
+			case OLIVE_TAPENADE_BRUSCHETTA:
+				price = 5;
+				break;
+
+			case PROSCIUTTO_AND_FRESH_MOZZERLLA:
+				price = 7;
+				break;
+
+			case ASIAN_CHICKEN_SALAD:
+				price = 7;
+				break;
+
+			case CHEESE_BURGER:
+				price = 4.75;
+				break;
+
+			case VEGGIE_BURGER:
+				price = 4.75;
+				break;
+
+			case CARNITAS_TACOS:
+				price = 4;
+				break;
+
+			case QUESADILLA:
+				price = 4.5;
+				break;
+
+			case ROASTED_PORTOBELLO_MUSHROOM_BRUSCHETTA:
+				price = 5;
+				break;
+
+			case BLT_SANDWICH:
+				price = 5;
+				break;
+
+			case THAI_STEAK_SALAD:
+				price = 7.5;
+				break;
+
+			case PANCETTA_BRUSCHETTA:
+				price = 6;
+				break;
+
+			case ITALIAN_GRILLED_CHEESE_SANDWICH:
+				price = 5;
+				break;
+
+			case STEAK_FAJITA_SALAD:
+				price = 7.5;
+				break;
+
+			default:
+				throw new AssertionError("Unknown MenuItem " + menuItem);
+		}
+
+		return price;
 	}
 
 }

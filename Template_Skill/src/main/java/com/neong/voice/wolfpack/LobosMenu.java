@@ -13,6 +13,16 @@ class LobosMenu {
 
 	public enum DayOrNight { DAY, NIGHT }
 
+	/*
+	  In case the menu ever changes, here's a command to convert the enums
+	  from the source code into values for the custom slot type definition.
+	  Just change the line numbers from 26,29 to whatever the start,end is.
+	  Note that initialisms must be manually restored to uppercase (i.e. BLT).
+
+	  sed -ne '26,29p' src/main/java/com/neong/voice/wolfpack/LobosMenu.java \
+	  | tr '[:upper:]_\t' '[:lower:] | tr ',' '\n' | tr -s ' \n' | cut -c 2-
+
+	*/
 	public enum MenuItem {
 		ARTICHOKE_CRAB_BRUSCHETTA, FRENCH_DIP, CLASSIC_COB, OLIVE_TAPENADE_BRUSCHETTA, PROSCIUTTO_AND_FRESH_MOZZERLLA,
 		ASIAN_CHICKEN_SALAD, ROASTED_PORTOBELLO_MUSHROOM_BRUSCHETTA, BLT_SANDWICH, THAI_STEAK_SALAD,
@@ -99,8 +109,12 @@ class LobosMenu {
 		return 0;
 	}
 
-	public double priceCheck(MenuItem menuItem)
-	{
+	/**
+	 * @return the price of an item from the menu.
+	 *
+	 * @param menuItem the item on the menu.
+	 */
+	public static double priceCheck(MenuItem menuItem) {
 		double price = 0;
 
 		switch (menuItem) {

@@ -71,6 +71,8 @@ LobosWeeklySpecialsIntent for the special this week
 LobosWeeklySpecialsIntent for the special today
 LobosWeeklySpecialsIntent for the special menu
 LobosWeeklySpecialsIntent for this weeks special
+LobosWeeklySpecialsIntent what the special is
+LobosWeeklySpecialsIntent what the weekly special is
 
 
 LobosWeeklySpecialsDayIntent daytime
@@ -105,6 +107,8 @@ LobosWeeklySpecialsDayIntent for the daily special menu
 LobosWeeklySpecialsDayIntent for the specials this afternoon
 LobosWeeklySpecialsDayIntent for the afternoon specials
 LobosWeeklySpecialsDayIntent for this weeks daily special
+LobosWeeklySpecialsDayIntent what the daily special is
+LobosWeeklySpecialsDayIntent what the daily special is this week
 
 LobosWeeklySpecialsNightIntent give me that nightly special biatch
 LobosWeeklySpecialsNightIntent what is the nightly special
@@ -138,6 +142,8 @@ LobosWeeklySpecialsNightIntent what is the special this evening
 LobosWeeklySpecialsNightIntent what's cheap for dinner
 LobosWeeklySpecialsNightIntent what specials at night
 LobosWeeklySpecialsNightIntent nightly specials
+LobosWeeklySpecialsDayIntent what the nightly special is
+LobosWeeklySpecialsDayIntent what the nightly special is this week
 
 LobosWeeklySpecialsNightIntent for the nightly special biatch
 LobosWeeklySpecialsNightIntent for the the nightly special
@@ -153,10 +159,13 @@ LobosWeeklySpecialsNightIntent for the nightly special menu
 
 
 LobosWeeklySpecialsPriceIntent what is the price of {menu_item}
-LobosWeeklySpecialsPriceIntent what is the price of {menu_item} at lobos
+LobosWeeklySpecialsPriceIntent what is the price of {menu_item}
 LobosWeeklySpecialsPriceIntent How much does {menu_item} cost
-LobosWeeklySpecialsPriceIntent How much does {menu_item} cost at lobos
+LobosWeeklySpecialsPriceIntent How much does the {menu_item} cost
+LobosWeeklySpecialsPriceIntent How much does {menu_item}
 LobosWeeklySpecialsPriceIntent How much does a {menu_item} cost
-LobosWeeklySpecialsPriceIntent How much does a {menu_item} cost at lobos
+LobosWeeklySpecialsPriceIntent How much does a {menu_item}
 LobosWeeklySpecialsPriceIntent what does a {menu_item} cost
-LobosWeeklySpecialsPriceIntent what does a {menu_item} cost at lobos
+LobosWeeklySpecialsPriceIntent what does a {menu_item} cost
+LobosWeeklySpecialsPriceIntent how much a {menu_item} cost
+LobosWeeklySpecialsPriceIntent how much the {menu_item} cost

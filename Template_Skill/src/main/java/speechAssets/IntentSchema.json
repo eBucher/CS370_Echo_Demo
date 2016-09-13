@@ -38,6 +38,15 @@
     },
     {
       "intent": "LobosWeeklySpecialsNightIntent"
+    },
+    {
+      "intent": "LobosWeeklySpecialsPriceIntent",
+      "slots": [
+        {
+          "name": "menu_item",
+          "type": "LIST_OF_MENU_ITEMS"
+        }
+      ]
     }
   ]
 }

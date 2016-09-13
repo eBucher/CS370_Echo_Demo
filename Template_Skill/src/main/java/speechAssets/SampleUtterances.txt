@@ -11,6 +11,7 @@ WhoDerIntent who there
 DrWhoIntent doctor who
 DrWhoIntent doctor hoo
 
+
 AMAZON.NoIntent nope
 AMAZON.NoIntent no way
 AMAZON.NoIntent hell no
@@ -118,3 +119,12 @@ LobosWeeklySpecialsNightIntent what is the special this evening
 LobosWeeklySpecialsNightIntent what's cheap for dinner
 LobosWeeklySpecialsNightIntent what specials at night
 LobosWeeklySpecialsNightIntent nightly specials
+
+LobosWeeklySpecialsPriceIntent what is the price of {menu_item}
+LobosWeeklySpecialsPriceIntent what is the price of {menu_item} at lobos
+LobosWeeklySpecialsPriceIntent How much does {menu_item} cost
+LobosWeeklySpecialsPriceIntent How much does {menu_item} cost at lobos
+LobosWeeklySpecialsPriceIntent How much does a {menu_item} cost
+LobosWeeklySpecialsPriceIntent How much does a {menu_item} cost at lobos
+LobosWeeklySpecialsPriceIntent what does a {menu_item} cost
+LobosWeeklySpecialsPriceIntent what does a {menu_item} cost at lobos

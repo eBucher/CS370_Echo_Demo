@@ -63,6 +63,15 @@ LobosWeeklySpecialsIntent whats on the special today
 LobosWeeklySpecialsIntent whats on the special
 LobosWeeklySpecialsIntent what is the special of the day
 LobosWeeklySpecialsIntent what is the special of the week
+LobosWeeklySpecialsIntent for the special
+LobosWeeklySpecialsIntent for the specials
+LobosWeeklySpecialsIntent for todays special
+LobosWeeklySpecialsIntent for todays specials
+LobosWeeklySpecialsIntent for the special this week
+LobosWeeklySpecialsIntent for the special today
+LobosWeeklySpecialsIntent for the special menu
+LobosWeeklySpecialsIntent for this weeks special
+
 
 LobosWeeklySpecialsDayIntent daytime
 LobosWeeklySpecialsDayIntent day
@@ -86,6 +95,16 @@ LobosWeeklySpecialsDayIntent whats the daily special today
 LobosWeeklySpecialsDayIntent whats the daily special this week
 LobosWeeklySpecialsDayIntent what are the specials this afternoon
 LobosWeeklySpecialsDayIntent what are the afternoon specials
+LobosWeeklySpecialsDayIntent for the daily special
+LobosWeeklySpecialsDayIntent for the daily specials
+LobosWeeklySpecialsDayIntent for todays daily special
+LobosWeeklySpecialsDayIntent for todays daily specials
+LobosWeeklySpecialsDayIntent for the daily special this week
+LobosWeeklySpecialsDayIntent for the daily special today
+LobosWeeklySpecialsDayIntent for the daily special menu
+LobosWeeklySpecialsDayIntent for the specials this afternoon
+LobosWeeklySpecialsDayIntent for the afternoon specials
+LobosWeeklySpecialsDayIntent for this weeks daily special
 
 LobosWeeklySpecialsNightIntent give me that nightly special biatch
 LobosWeeklySpecialsNightIntent what is the nightly special
@@ -119,6 +138,19 @@ LobosWeeklySpecialsNightIntent what is the special this evening
 LobosWeeklySpecialsNightIntent what's cheap for dinner
 LobosWeeklySpecialsNightIntent what specials at night
 LobosWeeklySpecialsNightIntent nightly specials
+
+LobosWeeklySpecialsNightIntent for the nightly special biatch
+LobosWeeklySpecialsNightIntent for the the nightly special
+LobosWeeklySpecialsNightIntent for the the nightly specials
+LobosWeeklySpecialsNightIntent for todays nightly special
+LobosWeeklySpecialsNightIntent for todays nightly specials
+LobosWeeklySpecialsNightIntent for the nightly special this week
+LobosWeeklySpecialsNightIntent for the nightly special today
+LobosWeeklySpecialsNightIntent for the special tonight
+LobosWeeklySpecialsNightIntent for the nightly special this week
+LobosWeeklySpecialsNightIntent for the nightly special today
+LobosWeeklySpecialsNightIntent for the nightly special menu
+
 
 LobosWeeklySpecialsPriceIntent what is the price of {menu_item}
 LobosWeeklySpecialsPriceIntent what is the price of {menu_item} at lobos

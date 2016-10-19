@@ -14,17 +14,25 @@ import java.util.*;
 import java.time.ZonedDateTime;
 
 public class CalendarConversation extends Conversation {
+	private enum CursorDirection { PREVIOUS, NEXT };
+
 	// Intent names
-	private final static String NEXT_EVENT_INTENT = "NextEventIntent";
+	private final static String EVENT_INFO_INTENT = "EventInfoIntent";
 
 	// Session attributes
 	private final static String CURSOR_POSITION_ATTRIB = "cursor_position";
+	private final static String QUERY_RESULTS_ATTRIB = "query_results";
 
 	// Date/time formatters
 	private final static ZoneId PST = ZoneId.of("America/Los_Angeles");
 	private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
 	private final static DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("EEEE");
 	private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("????MMdd");
+
+	// Cursor control instructions (reprompt)
+	private final static String CURSOR_INSTRUCTIONS_SSML =
+		"<speak>You can say next to hear the next event, " +
+		"or previous to hear the previous event.</speak>";
 
 	// Database connection
 	private DbConnection db;
@@ -39,7 +47,7 @@ public class CalendarConversation extends Conversation {
 		db = new DbConnection("DbCredentials.xml");
 
 		// Add custom intent names for dispatcher use.
-		supportedIntentNames.add(NEXT_EVENT_INTENT);
+		supportedIntentNames.add(EVENT_INFO_INTENT);
 	}
 
 
@@ -58,15 +66,19 @@ public class CalendarConversation extends Conversation {
 		// Dispatch to the specifc handler for the intent received
 		switch (intentName) {
 
-		case NEXT_EVENT_INTENT:
-			// Initialize the position to 0 if not already set.
-			if (session.getAttribute(CURSOR_POSITION_ATTRIB) == null)
-				session.setAttribute(CURSOR_POSITION_ATTRIB, 0);
-
-			response = handleNextEventIntent(intentReq, session);
+		case EVENT_INFO_INTENT:
+			response = handleEventInfoIntent(intentReq, session);
 			break;
 
-		// TODO: handle cursor control intents (AMAZON.NextIntent, AMAZON.PreviousIntent)
+		case "AMAZON.NextIntent":
+			response = handleCursorChangeIntent(CursorDirection.NEXT, intentReq, session);
+			break;
+
+		case "AMAZON.PreviousIntent":
+			response = handleCursorChangeIntent(CursorDirection.PREVIOUS, intentReq, session);
+			break;
+
+		// TODO: how to stop/cancel
 
 		default:
 			// This should never be reached; we only get intents we support
@@ -78,25 +90,82 @@ public class CalendarConversation extends Conversation {
 	}
 
 
-	// Handle a specific intent (TODO: this name doesn't make sense anymore)
-	private SpeechletResponse handleNextEventIntent(IntentRequest intentReq, Session session) {
-		Map<String, Vector<Object>> results =
-			db.runQuery("SELECT * FROM ssucalendar.event_info WHERE start > now() LIMIT 1;");
+	/** Handler for EventInfoIntent requests
+	 *
+	 * This is the intent that initiates a listing of events.  When this
+	 * intent is triggered, we use the information available to us through
+	 * slots or other available context to perform a query selecting a list
+	 * of events related to the user's request.  This list is stored in the
+	 * session object, along with a cursor position (list index), which we
+	 * initialize to zero.  Finally, a tell response is returned, reading
+	 * the first block of event information and leaving the session open
+	 * for further navigation.
+	 *
+	 * @param intentReq is the current request object from AVS.
+	 * @param session is the current session object from AVS.
+	 *
+	 * @returns speech for the first found event, or error speech if failed.
+	 */
+	private SpeechletResponse handleEventInfoIntent(IntentRequest intentReq, Session session) {
+		int position = 0;
+		session.setAttribute(CURSOR_POSITION_ATTRIB, position);
+
+		Map<String, Vector<Object>> results = queryEventInfo();
+
 		if (results == null)
 			// The query failed for some reason (check the logs)
 			return internalErrorResponse();
 
-		// State we want to persist between requests is stored in the session
-		int position = (int) session.getAttribute(CURSOR_POSITION_ATTRIB);
+		session.setAttribute(QUERY_RESULTS_ATTRIB, results);
 
-		// TODO: this needs to be an ask response, to keep the session open
-		return newTellResponse(formatResponseSsml(position, results), true);
+		return newEventInfoResponse(position, results);
+	}
+
+
+	/** Handler for AMAZON.NextIntent and AMAZON.PreviousIntent
+	 */
+	private SpeechletResponse handleCursorChangeIntent(CursorDirection direction, IntentRequest intentReq, Session session) {
+		int position = (int) session.getAttribute(CURSOR_POSITION_ATTRIB);
+		int newPosition;
+
+		switch (direction) {
+		case NEXT:
+			newPosition = position + 1;
+			break;
+		case PREVIOUS:
+			newPosition = position - 1;
+			break;
+		default:
+			// Never reached
+			return internalErrorResponse();
+		}
+
+		session.setAttribute(CURSOR_POSITION_ATTRIB, newPosition);
+
+		Map<String, Vector<Object>> results =
+			(HashMap<String, Vector<Object>>) session.getAttribute(QUERY_RESULTS_ATTRIB);
+
+		// TODO: bounds check newPosition for results, handle sliding window of results, etc.
+
+		return newEventInfoResponse(newPosition, results);
 	}
 
 
 	// "Pay no attention to that man behind the curtain!"
 	private static SpeechletResponse internalErrorResponse() {
 		return newTellResponse("Sorry, I'm on break.", false);
+	}
+
+
+	private static SpeechletResponse newEventInfoResponse(int position, Map<String, Vector<Object>> results) {
+		String responseSsml = formatResponseSsml(position, results);
+		SpeechletResponse response = newAskResponse(responseSsml, true, CURSOR_INSTRUCTIONS_SSML, true);
+		return response;
+	}
+
+
+	private Map<String, Vector<Object>> queryEventInfo() {
+		return db.runQuery("SELECT * FROM ssucalendar.event_info WHERE start > now() LIMIT 5;");
 	}
 
 

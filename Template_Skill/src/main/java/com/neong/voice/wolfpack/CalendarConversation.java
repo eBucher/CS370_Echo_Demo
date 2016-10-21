@@ -13,11 +13,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.ZonedDateTime;
 
+
 public class CalendarConversation extends Conversation {
 	private enum CursorDirection { PREVIOUS, NEXT };
 
 	// Intent names
 	private final static String EVENT_INFO_INTENT = "EventInfoIntent";
+	private final static String TODAY_SPORTS_INTENT = "TodaySportsIntent";
+	private final static String AMAZON_NEXT_INTENT = "AMAZON.NextIntent";
+	private final static String AMAZON_PREVIOUS_INTENT = "AMAZON.PreviousIntent";
 
 	// Session attributes
 	private final static String CURSOR_POSITION_ATTRIB = "cursor_position";
@@ -48,6 +52,9 @@ public class CalendarConversation extends Conversation {
 
 		// Add custom intent names for dispatcher use.
 		supportedIntentNames.add(EVENT_INFO_INTENT);
+		supportedIntentNames.add(TODAY_SPORTS_INTENT);
+		supportedIntentNames.add(AMAZON_NEXT_INTENT);
+		supportedIntentNames.add(AMAZON_PREVIOUS_INTENT);
 	}
 
 
@@ -70,11 +77,15 @@ public class CalendarConversation extends Conversation {
 			response = handleEventInfoIntent(intentReq, session);
 			break;
 
-		case "AMAZON.NextIntent":
+		case TODAY_SPORTS_INTENT:
+			response = handleTodaySportsIntent(intentReq, session);
+			break;
+
+		case AMAZON_NEXT_INTENT:
 			response = handleCursorChangeIntent(CursorDirection.NEXT, intentReq, session);
 			break;
 
-		case "AMAZON.PreviousIntent":
+		case AMAZON_PREVIOUS_INTENT:
 			response = handleCursorChangeIntent(CursorDirection.PREVIOUS, intentReq, session);
 			break;
 
@@ -118,11 +129,25 @@ public class CalendarConversation extends Conversation {
 
 		session.setAttribute(QUERY_RESULTS_ATTRIB, results);
 
-		return newEventInfoResponse(position, results);
+		return newCursorResponse(position, results);
 	}
 
 
-	/** Handler for AMAZON.NextIntent and AMAZON.PreviousIntent
+	/** Handler for TodaySportsIntent requests
+	 */
+	private SpeechletResponse handleTodaySportsIntent(IntentRequest intentreq, Session session) {
+		// Query the sports calander, return all sporting events
+		Map<String, Vector<Object>> results = queryEventsForCategory(300);
+
+		if (results == null)
+			// The query failed for some reason (check the logs)
+			return internalErrorResponse();
+
+		// TODO: Enable cursor
+		return newTellResponse(formatEventListSsml(0, 5, results), true);
+	}
+
+	/** Handler for AMAZON.NextIntent and AMAZON.PreviousIntent requests
 	 */
 	private SpeechletResponse handleCursorChangeIntent(CursorDirection direction, IntentRequest intentReq, Session session) {
 		int position = (int) session.getAttribute(CURSOR_POSITION_ATTRIB);
@@ -144,10 +169,17 @@ public class CalendarConversation extends Conversation {
 
 		Map<String, Vector<Object>> results =
 			(HashMap<String, Vector<Object>>) session.getAttribute(QUERY_RESULTS_ATTRIB);
-
 		// TODO: bounds check newPosition for results, handle sliding window of results, etc.
 
-		return newEventInfoResponse(newPosition, results);
+		return newCursorResponse(newPosition, results);
+	}
+
+
+	private static SpeechletResponse newCursorResponse(int position, Map<String, Vector<Object>> results) {
+		String eventSsml = formatEventSsml(position, results);
+		String responseSsml = "<speak>Okay, the next event is " + eventSsml + "</speak>";
+
+		return newAskResponse(responseSsml, true, CURSOR_INSTRUCTIONS_SSML, true);
 	}
 
 
@@ -157,20 +189,29 @@ public class CalendarConversation extends Conversation {
 	}
 
 
-	private static SpeechletResponse newEventInfoResponse(int position, Map<String, Vector<Object>> results) {
-		String responseSsml = formatResponseSsml(position, results);
-		SpeechletResponse response = newAskResponse(responseSsml, true, CURSOR_INSTRUCTIONS_SSML, true);
-		return response;
-	}
-
-
 	private Map<String, Vector<Object>> queryEventInfo() {
 		return db.runQuery("SELECT * FROM ssucalendar.event_info WHERE start > now() LIMIT 5;");
 	}
 
 
+	private Map<String, Vector<Object>> queryEventsForCategory(int category) {
+		return db.runQuery("SELECT * FROM ssucalander.event_info WHERE start > now() AND category_id = " + category + " LIMIT 5; ");
+	}
+
+
+	private static String formatEventListSsml(int position, int count, Map<String, Vector<Object>> results) {
+		String ssml = "";
+		int stop = position + count;
+
+		while (position < stop)
+			ssml += "<s>" + formatEventSsml(position++, results) + "</s>";
+
+		return ssml;
+	}
+
+
 	// Helper to extract info from results at position and format as SSML
-	private static String formatResponseSsml(int position, Map<String, Vector<Object>> results) {
+	private static String formatEventSsml(int position, Map<String, Vector<Object>> results) {
 		// The "summary" is the title of the event.
 		String summary = (String) results.get("summary").get(position);
 
@@ -188,10 +229,10 @@ public class CalendarConversation extends Conversation {
 		String time = zonedDateTime.format(TIME_FORMATTER);
 
 		// Return a message decorated with SSML tags.
-		return "<speak>Okay, the next event is " + summary +
+		return "<s>" + summary +
 			" on " + day + " <say-as interpret-as=\"date\">" + date +
 			"</say-as> at <say-as interpret-as=\"time\">" + time +
-			"</say-as> at " + location + ".</speak>";
+			"</say-as> at " + location + "</s>";
 	}
 
 }

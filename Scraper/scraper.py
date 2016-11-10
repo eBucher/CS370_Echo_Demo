@@ -192,6 +192,44 @@ def get_open_to_public(event):
     return check_bool(value)
 
 
+def get_location(event):
+    '''
+    This function is a cluster-fuck. It's 2:30am and we just need to complete it.
+    '''
+    value = get_value("location", event)
+    if(value == None):
+        return
+    array = value.split()
+    green_music_center = check_GMC(array)
+    if (green_music_center == "Green Music Center"):
+        return green_music_center
+    student_cent = check_student(array)
+    if(student_cent == "Student Center"):
+        return student_cent
+    coop = check_coop(array)
+    if(coop == "The Cooperage"):
+        return coop
+    stevenson_int = check_steve(array)
+    if stevenson_int != None:
+        steve = stevenson_int.split()
+        if(steve[0] == "Stevenson" and steve[1] == "Hall" and steve[2].isdigit()):
+            return steve[0] + ' ' + steve[1] + ' ' + steve[2]
+    lobo = check_lobo(array)
+    if(lobo == "Lobo\'s"):
+        return lobo
+    ives = check_ives(array)
+    if ives != None:
+        ives_new = ives.split()
+        if(ives_new[0] == "Ives" and ives_new[1] == "Hall" and ives_new[2].isdigit()):
+            return ives_new[0] + ' ' + ives_new[1] + ' ' + ives_new[2]
+    evert = check_evert(array)
+    if (evert == "Evert B. Person Theatre"):
+        return evert
+    gym = gym_check(array)
+    if(gym == "Gymnasium by the swimming pools."):
+        return gym
+
+
 # Helper for mapping None to ''
 def coalesce(val, repl):
     return repl if val is None else val
@@ -200,6 +238,70 @@ def coalesce(val, repl):
 #
 # Functions for processing events and returning records
 #
+
+
+def gym_check(array):
+    for i in range(len(array)):
+        if(array[i] == "Physical"):
+            return "Gymnasium by the swimming pools."
+
+
+def check_evert(array):
+    for i in range(len(array)):
+        if(array[i] == "Evert" and array[i + 1] == "B." and array[i + 2] == "Person" and array[i + 3 == "Theatre"]):
+            shortened = array[i] + ' ' + array[i + 1] + ' ' + array[i + 2] + ' ' + array[i + 3]
+            return shortened
+
+def check_ives(array):
+    for i in range(len(array)):
+        if(array[i] == "Ives" and array[i + 1] == "Hall"):
+            shortened = array[i] + ' ' + array[i + 1]
+            new_val = add_int(array, shortened)
+            return new_val
+
+
+def check_lobo(array):
+    for i in range(len(array)):
+        if(array[i] == "Lobo\'s"):
+            shortened = array[i]
+            return shortened
+
+
+def check_steve(array):
+    for i in range(len(array)):
+        if(array[i] == "Stevenson" and array[i + 1] == "Hall"):
+            shortened = array[i] + ' ' + array[i + 1]
+            new_val = add_int(array, shortened)
+            return new_val
+
+
+def add_int(array, shortened):
+    for i in range(len(array)):
+        if(array[i].isdigit()):
+            shortened_int = shortened + ' ' + str(array[i])
+            return shortened_int
+
+
+def check_coop(array):
+    for i in range(len(array)):
+        if (array[i] == "The" and array[i + 1] == "Cooperage"):
+            shortened = array[i] + ' ' + array[i + 1]
+            return shortened
+
+
+def check_student(array):
+    for i in range(len(array)):
+        if (array[i] == "Student" and array[i+1] == "Center"):
+            shortened = array[i] + ' ' + array[i + 1]
+            return shortened
+
+
+def check_GMC(array):
+    for i in range(len(array)):
+        if (array[i] == 'Green' and array[i + 1] == "Music" and array[i + 2] == "Center"):
+            shortened = array[i] + ' ' + array[i + 1] + ' ' + array[i + 2]
+            return shortened
+
 
 def get_record(event):
     """
@@ -216,10 +318,10 @@ def get_record(event):
         "categories": get_categories(event),
         "all_day_event": get_all_day_event(event),
         "open_to_public": get_open_to_public(event),
+        "location": get_location(event),
 
         "title": getter("summary"),
         "description": getter("description"),
-        "location": getter("location"),
         "start": getter("dtstart"),
         "end": getter("dtend"),
         "event_uid": getter("uid"),
@@ -264,6 +366,7 @@ def has_location(record):
     """
     Returns true if the location field exists, otherwise False.
     """
+    #location = record.get("location", None)
     return record.get('location', None) != None
 
 
@@ -350,6 +453,7 @@ def uses_statement_template(statement_template):
 
 # Helper for creating functions that match a common pattern for INSERT
 def make_common_insert(statement_template, *fields):
+    # print("Inside make_common_insert function...")
     """
     Returns a function that takes a cursor and an event and executes the
     SQL statement resulting from the template and given fields.
@@ -369,6 +473,8 @@ def make_common_insert(statement_template, *fields):
             event
         )
     """
+    # print("*fields:", fields)
+    # print("statement_template: ", statement_template)
     @uses_values_fields(*fields)
     @uses_statement_template(statement_template)
     def common_insert(statement, cursor, event):

@@ -139,23 +139,24 @@ public class CalendarHelper {
 	public static String replaceUnspeakables(final String ssml) {
 		return ssml.replaceAll("&", " and ");
 	}
-	
-	
-	public static String replacePartsOfNames(final String ssml){
+
+
+	public static String replacePartsOfNames(final String ssml) {
 		String newSsml =  ssml;
-		newSsml =  newSsml.replaceAll("AOii", "Alpha Omnicron Pi");
-		newSsml =  newSsml.replaceAll("KDZ", "Kappa Delta Zeta");
-		newSsml =  newSsml.replaceAll("S@S", "Sundays at Schroeder");
-		newSsml =  newSsml.replaceAll("GPhi", "Gamma Phi");
-		newSsml =  newSsml.replaceAll("IMS", "Intermural");
-		newSsml =  newSsml.replaceAll("MGC", "Multicultural Greek Council");
-		newSsml =  newSsml.replaceAll("FAASU", "Filipino American Association");
-		newSsml =  newSsml.replaceAll("AGD", "Alpha Gamma Delta");
-		newSsml =  newSsml.replaceAll("IFC", "Internfraternity Council");
-		newSsml =  newSsml.replaceAll("IEW", "International Education Week");
-		newSsml =  newSsml.replaceAll("ADPi", "Alpha Delta Pi");
-		newSsml =  newSsml.replaceAll("W.I.T.S.", "World Instructor Training Schools");
-		
+
+		newSsml = newSsml.replaceAll("AOii", "Alpha Omnicron Pi");
+		newSsml = newSsml.replaceAll("KDZ", "Kappa Delta Zeta");
+		newSsml = newSsml.replaceAll("S@S", "Sundays at Schroeder");
+		newSsml = newSsml.replaceAll("GPhi", "Gamma Phi");
+		newSsml = newSsml.replaceAll("IMS", "Intermural");
+		newSsml = newSsml.replaceAll("MGC", "Multicultural Greek Council");
+		newSsml = newSsml.replaceAll("FAASU", "Filipino American Association");
+		newSsml = newSsml.replaceAll("AGD", "Alpha Gamma Delta");
+		newSsml = newSsml.replaceAll("IFC", "Internfraternity Council");
+		newSsml = newSsml.replaceAll("IEW", "International Education Week");
+		newSsml = newSsml.replaceAll("ADPi", "Alpha Delta Pi");
+		newSsml = newSsml.replaceAll("W.I.T.S.", "World Instructor Training Schools");
+
 		return newSsml;
 	}
 
@@ -204,29 +205,30 @@ public class CalendarHelper {
 		}
 		return responseBuilder.toString();
 	}
-	
-	public static String listEventsWithDays(final String format, final Map<String, Vector<Object>> events){
+
+
+	public static String listEventsWithDays(final String format, final Map<String, Vector<Object>> events) {
 		String dateInProgressSsml = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(0));
 		String eventDateSsml;
 		String eventList = "On " + dateInProgressSsml + " there is ";
-		
-		for(int i = 0; i < events.get("start").size(); i++){
+
+		for (int i = 0; i < events.get("start").size(); i++) {
 			eventDateSsml = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(i));
-			if(!eventDateSsml.equals(dateInProgressSsml)){
+			if (!eventDateSsml.equals(dateInProgressSsml)) {
 				dateInProgressSsml = eventDateSsml;
 				eventList += ". On " + dateInProgressSsml + " there is ";
-			} else{
-				if(i == events.get("start").size() - 1 || 
-						!dateInProgressSsml.equals(CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(i + 1)))){
+			} else {
+				final String nextDate = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(i + 1));
+				if (i == events.get("start").size() - 1 || !dateInProgressSsml.equals(nextDate)) {
 					eventList += ", and ";
-				}else{
+				} else {
 					eventList += ", ";
 				}
 			}
-			
+
 			eventList += CalendarHelper.formatEventSsml(format, events, i);
 		}
-		
+
 		eventList += ".";
 		return eventList;
 	}

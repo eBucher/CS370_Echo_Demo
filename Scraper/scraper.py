@@ -384,7 +384,6 @@ def has_location(record):
     """
     Returns true if the location field exists, otherwise False.
     """
-    #location = record.get("location", None)
     return record.get('location', None) != None
 
 
@@ -471,7 +470,6 @@ def uses_statement_template(statement_template):
 
 # Helper for creating functions that match a common pattern for INSERT
 def make_common_insert(statement_template, *fields):
-    # print("Inside make_common_insert function...")
     """
     Returns a function that takes a cursor and an event and executes the
     SQL statement resulting from the template and given fields.
@@ -491,8 +489,6 @@ def make_common_insert(statement_template, *fields):
             event
         )
     """
-    # print("*fields:", fields)
-    # print("statement_template: ", statement_template)
     @uses_values_fields(*fields)
     @uses_statement_template(statement_template)
     def common_insert(statement, cursor, event):

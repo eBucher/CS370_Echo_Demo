@@ -577,9 +577,8 @@ public class CalendarConversation extends Conversation {
 	 * @param repromptSsml the message to speak to the user if they do not respond within the timeout
 	 *                     window.  SSML markup is allowed, but the string should not include
 	 *                     {@code <speak>...</speak>} tags.
-	 * @return a new ask response that keeps the session open and prepends "Okay. " to the front of
-	 *         the specified response message.  Both the response message and the reprompt message
-	 *         get wrapped in {@code <speak>...</speak>} tags.
+	 * @return a new ask response that keeps the session open.  Both the response message and the
+	 *         reprompt message get wrapped in {@code <speak>...</speak>} tags.
 	 */
 	private static SpeechletResponse newAffirmativeResponse(String responseSsml, String repromptSsml) {
 		responseSsml = CalendarHelper.replacePartsOfNames(responseSsml);

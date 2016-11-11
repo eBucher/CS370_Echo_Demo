@@ -142,7 +142,10 @@ def get_custom_value(field_id, event):
             if int(field.params['ID'][0]) == int_field_id)
 
 
-# Helper for the getters below
+#
+# Helpers for the getters below
+#
+
 def check_bool(value):
     """
     Returns True if the value is "TRUE", False if the value is "FALSE", or
@@ -152,6 +155,78 @@ def check_bool(value):
         return value == "TRUE"
     else:
         return None
+
+
+def add_room_number(array, shortened):
+    for word in array:
+        if word.isdigit():
+            return shortened + ' ' + str(word)
+
+
+def gym_check(array):
+    for word in array:
+        if word == "Physical":
+            return "Gymnasium by the swimming pools"
+
+
+def check_evert(array):
+    arraylen = len(array)
+    for i in range(arraylen):
+        if arraylen - i >= 4:
+            phrase = ' '.join(array[slice(i, i + 4)])
+            if phrase == "Evert B. Person Theatre":
+                return phrase
+
+
+def check_ives(array):
+    arraylen = len(array)
+    for i in range(arraylen):
+        if arraylen - i >= 2:
+            phrase = ' '.join(array[slice(i, i + 2)])
+            if phrase == "Ives Hall":
+                return add_room_number(array, phrase)
+
+
+def check_lobo(array):
+    for word in array:
+        if word == "Lobo\'s":
+            return word
+
+
+def check_steve(array):
+    arraylen = len(array)
+    for i in range(arraylen):
+        if arraylen - i >= 2:
+            phrase = ' '.join(array[slice(i, i + 2)])
+            if phrase == "Stevenson Hall":
+                return add_room_number(array, phrase)
+
+
+def check_coop(array):
+    arraylen = len(array)
+    for i in range(arraylen):
+        if arraylen - i >= 2:
+            phrase = ' '.join(array[slice(i, i + 2)])
+            if phrase == "The Cooperage":
+                return phrase
+
+
+def check_student(array):
+    arraylen = len(array)
+    for i in range(arraylen):
+        if arraylen - i >= 2:
+            phrase = ' '.join(array[slice(i, i + 2)])
+            if phrase == "Student Center":
+                return phrase
+
+
+def check_GMC(array):
+    arraylen = len(array)
+    for i in range(arraylen):
+        if arraylen - i >= 3:
+            phrase = ' '.join(array[slice(i, i + 3)])
+            if phrase == "Green Music Center":
+                return phrase
 
 
 #
@@ -193,40 +268,51 @@ def get_open_to_public(event):
 
 
 def get_location(event):
-    '''
-    This function is a cluster-fuck. It's 2:30am and we just need to complete it.
-    '''
+    """
+    The location names in the calendar can be excessively long and repetitive.
+    This function transforms an event's location into a speech-friendly value.
+    Returns the transformed location if a location is specified, otherwise None.
+    """
     value = get_value("location", event)
-    if(value == None):
-        return
+    if value is None:
+        return None
+
     array = value.split()
+
     green_music_center = check_GMC(array)
-    if (green_music_center == "Green Music Center"):
+    if green_music_center == "Green Music Center":
         return green_music_center
+
     student_cent = check_student(array)
-    if(student_cent == "Student Center"):
+    if student_cent == "Student Center":
         return student_cent
+
     coop = check_coop(array)
-    if(coop == "The Cooperage"):
+    if coop == "The Cooperage":
         return coop
+
     stevenson_int = check_steve(array)
-    if stevenson_int != None:
+    if stevenson_int is not None:
         steve = stevenson_int.split()
-        if(steve[0] == "Stevenson" and steve[1] == "Hall" and steve[2].isdigit()):
+        if steve[0] == "Stevenson" and steve[1] == "Hall" and steve[2].isdigit():
             return steve[0] + ' ' + steve[1] + ' ' + steve[2]
+
     lobo = check_lobo(array)
-    if(lobo == "Lobo\'s"):
+    if lobo == "Lobo\'s":
         return lobo
+
     ives = check_ives(array)
-    if ives != None:
+    if ives is not None:
         ives_new = ives.split()
-        if(ives_new[0] == "Ives" and ives_new[1] == "Hall" and ives_new[2].isdigit()):
+        if ives_new[0] == "Ives" and ives_new[1] == "Hall" and ives_new[2].isdigit():
             return ives_new[0] + ' ' + ives_new[1] + ' ' + ives_new[2]
+
     evert = check_evert(array)
-    if (evert == "Evert B. Person Theatre"):
+    if evert == "Evert B. Person Theatre":
         return evert
+
     gym = gym_check(array)
-    if(gym == "Gymnasium by the swimming pools."):
+    if gym == "Gymnasium by the swimming pools.":
         return gym
 
 
@@ -238,70 +324,6 @@ def coalesce(val, repl):
 #
 # Functions for processing events and returning records
 #
-
-
-def gym_check(array):
-    for i in range(len(array)):
-        if(array[i] == "Physical"):
-            return "Gymnasium by the swimming pools."
-
-
-def check_evert(array):
-    for i in range(len(array)):
-        if(array[i] == "Evert" and array[i + 1] == "B." and array[i + 2] == "Person" and array[i + 3 == "Theatre"]):
-            shortened = array[i] + ' ' + array[i + 1] + ' ' + array[i + 2] + ' ' + array[i + 3]
-            return shortened
-
-def check_ives(array):
-    for i in range(len(array)):
-        if(array[i] == "Ives" and array[i + 1] == "Hall"):
-            shortened = array[i] + ' ' + array[i + 1]
-            new_val = add_int(array, shortened)
-            return new_val
-
-
-def check_lobo(array):
-    for i in range(len(array)):
-        if(array[i] == "Lobo\'s"):
-            shortened = array[i]
-            return shortened
-
-
-def check_steve(array):
-    for i in range(len(array)):
-        if(array[i] == "Stevenson" and array[i + 1] == "Hall"):
-            shortened = array[i] + ' ' + array[i + 1]
-            new_val = add_int(array, shortened)
-            return new_val
-
-
-def add_int(array, shortened):
-    for i in range(len(array)):
-        if(array[i].isdigit()):
-            shortened_int = shortened + ' ' + str(array[i])
-            return shortened_int
-
-
-def check_coop(array):
-    for i in range(len(array)):
-        if (array[i] == "The" and array[i + 1] == "Cooperage"):
-            shortened = array[i] + ' ' + array[i + 1]
-            return shortened
-
-
-def check_student(array):
-    for i in range(len(array)):
-        if (array[i] == "Student" and array[i+1] == "Center"):
-            shortened = array[i] + ' ' + array[i + 1]
-            return shortened
-
-
-def check_GMC(array):
-    for i in range(len(array)):
-        if (array[i] == 'Green' and array[i + 1] == "Music" and array[i + 2] == "Center"):
-            shortened = array[i] + ' ' + array[i + 1] + ' ' + array[i + 2]
-            return shortened
-
 
 def get_record(event):
     """

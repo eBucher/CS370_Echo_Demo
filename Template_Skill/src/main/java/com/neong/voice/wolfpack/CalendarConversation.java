@@ -543,7 +543,7 @@ public class CalendarConversation extends Conversation {
 	 */
 	private static SpeechletResponse dayByDayEventsResponse(Map<String, Vector<Object>> results,
 	                                                        DateRange when, String prefix) {
-		String eventFormat = "{title} at {start:time}";
+		String eventFormat = "<s>{title} at {start:time}</s>";
 
 		String responseSsml = prefix + CalendarHelper.listEventsWithDays(eventFormat, results);
 		String repromptSsml = "Is there anything you would like to know about those events?";

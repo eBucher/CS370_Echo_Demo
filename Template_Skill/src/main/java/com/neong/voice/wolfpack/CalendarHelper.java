@@ -199,7 +199,7 @@ public class CalendarHelper {
 		final StringBuilder responseBuilder = new StringBuilder(eventsLength * format.length());
 
 		for (int i = 0; i < eventsLength; i++){
-			if(i == eventsLength - 1)
+			if(i == eventsLength - 1 && eventsLength != 1)
 				responseBuilder.append(" and ");
 			responseBuilder.append(formatEventSsml(format, events, i));
 		}
@@ -211,26 +211,43 @@ public class CalendarHelper {
 		String dateInProgressSsml = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(0));
 		String eventDateSsml;
 		String eventList = "On " + dateInProgressSsml + " there is ";
+		String nextDate;
 
 		for (int i = 0; i < events.get("start").size(); i++) {
 			eventDateSsml = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(i));
 			if (!eventDateSsml.equals(dateInProgressSsml)) {
 				dateInProgressSsml = eventDateSsml;
-				eventList += ". On " + dateInProgressSsml + " there is ";
-			} else {
-				final String nextDate = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(i + 1));
-				if (i == events.get("start").size() - 1 || !dateInProgressSsml.equals(nextDate)) {
-					eventList += ", and ";
-				} else {
-					eventList += ", ";
-				}
+				eventList += ". On " + dateInProgressSsml + " there is: ";
+			} else if (lastEventOnDay(events, i)) {
+					eventList += "and ";
 			}
 
 			eventList += CalendarHelper.formatEventSsml(format, events, i);
 		}
 
-		eventList += ".";
 		return eventList;
+	}
+
+
+	/**
+	 * Preconditions:   0 <= index <= the number of events represented in the map - 1
+	 *
+	 * @param events    A list of events that are about to be printed out. There must
+	 *                  be a column named "start" that has timestamp objects.
+	 * @param index     The index of the event to see check.
+	 * @return          true if the the index is the last event in the map, or if the
+	 *                  event that follows the event at index i starts on a different
+	 *                  day. Otherwise, the method returns false.
+	 */
+	public static boolean lastEventOnDay(final Map<String, Vector<Object>> events, int index) {
+		// If this is the last of all the events, then it must be the last on this day.
+		if (index == events.get("start").size() - 1)
+			return true;
+
+		String eventDate = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(index));
+		String nextDate = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(index + 1));
+
+		return !eventDate.equals(nextDate);
 	}
 
 

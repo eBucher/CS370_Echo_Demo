@@ -218,17 +218,13 @@ public class CalendarHelper {
 			if (!eventDateSsml.equals(dateInProgressSsml)) {
 				dateInProgressSsml = eventDateSsml;
 				eventList += ". On " + dateInProgressSsml + " there is: ";
-			} else {
-				eventList += ", ";
-				if(lastEventOnDay(events, i)){
+			} else if(lastEventOnDay(events, i)){
 					eventList += "and ";
-				}
 			}	
 
 			eventList += CalendarHelper.formatEventSsml(format, events, i);
 		}
 
-		eventList += ".";
 		return eventList;
 	}
 	

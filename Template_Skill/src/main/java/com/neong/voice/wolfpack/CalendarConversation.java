@@ -63,6 +63,7 @@ public class CalendarConversation extends Conversation {
 
 		db = new DbConnection("DbCredentials.xml");
 		db.getRemoteConnection();
+		db.runQuery("SET timezone='" + CalendarHelper.TIME_ZONE + "'");
 
 		// Add custom intent names for dispatcher use.
 		supportedIntentNames.add(INTENT_NEXTEVENT);

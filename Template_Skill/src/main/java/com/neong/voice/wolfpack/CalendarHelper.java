@@ -247,7 +247,7 @@ public class CalendarHelper {
 		String eventDate = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(index));
 		String nextDate = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(index + 1));
 
-		return !eventDate.equals(nextDate)
+		return !eventDate.equals(nextDate);
 	}
 
 

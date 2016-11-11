@@ -20,10 +20,18 @@ import com.neong.voice.wolfpack.AmazonDateParser;
                 getterVisibility=Visibility.NONE,
                 isGetterVisibility=Visibility.NONE)
 public class DateRange {
-	@JsonProperty("begin") private final Date _begin;
-	@JsonProperty("end") private final Date _end;
-	private String relativeDate;
-	private String relativeDateWithPreposition;
+	@JsonProperty("begin")
+	private final Date _begin;
+
+	@JsonProperty("end")
+	private final Date _end;
+
+	@JsonProperty("relativeDate")
+	private final String _relativeDate;
+
+	@JsonProperty("relativeDateWithPreposition")
+	private final String _relativeDateWithPreposition;
+
 
 	public DateRange(final String dateString) {
 		final ImmutablePair<Date, Date> range =
@@ -31,36 +39,45 @@ public class DateRange {
 
 		_begin = range.left;
 		_end = range.right;
-		
-		relativeDate = AmazonDateParser.timeRange(dateString, false);
-		relativeDateWithPreposition = AmazonDateParser.timeRange(dateString, true);
+
+		_relativeDate = AmazonDateParser.timeRange(dateString, false);
+		_relativeDateWithPreposition = AmazonDateParser.timeRange(dateString, true);
 	}
+
 
 	@JsonCreator
 	public DateRange(final Map<String, Object> props) {
 		_begin = Date.valueOf((String) props.get("begin"));
 		_end = Date.valueOf((String) props.get("end"));
-		relativeDate = props.get("relativeDate").toString();
-		relativeDateWithPreposition = props.get("relativeDateWithPreposition").toString();
+
+		_relativeDate = (String) props.get("relativeDate");
+		_relativeDateWithPreposition = (String) props.get("relativeDateWithPreposition");
 	}
+
 
 	public Date getBegin() {
 		return _begin;
 	}
 
+
 	public Date getEnd() {
 		return _end;
 	}
-	
-	public String getRelativeDate(boolean usePreposition){
+
+
+	public String getRelativeDate(boolean usePreposition) {
+
 		if(usePreposition)
-			return relativeDateWithPreposition;
-		return relativeDate;
+			return _relativeDateWithPreposition;
+
+		return _relativeDate;
 	}
+
 
 	public Timestamp getTimestamp() {
 		return Timestamp.valueOf(_begin.toString() + " 12:00:00");
 	}
+
 
 	public String getDateSsml() {
 		return CalendarHelper.formatDateSsml(getTimestamp());

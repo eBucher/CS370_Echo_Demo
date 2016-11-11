@@ -142,7 +142,10 @@ def get_custom_value(field_id, event):
             if int(field.params['ID'][0]) == int_field_id)
 
 
-# Helper for the getters below
+#
+# Helpers for the getters below
+#
+
 def check_bool(value):
     """
     Returns True if the value is "TRUE", False if the value is "FALSE", or
@@ -152,6 +155,78 @@ def check_bool(value):
         return value == "TRUE"
     else:
         return None
+
+
+def add_room_number(words, shortened):
+    for word in words:
+        if word.isdigit():
+            return shortened + ' ' + str(word)
+
+
+def gym_check(words):
+    for word in words:
+        if word == "Physical":
+            return "Gymnasium by the swimming pools"
+
+
+def check_evert(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 4:
+            phrase = ' '.join(words[slice(i, i + 4)])
+            if phrase == "Evert B. Person Theatre":
+                return phrase
+
+
+def check_ives(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 2:
+            phrase = ' '.join(words[slice(i, i + 2)])
+            if phrase == "Ives Hall":
+                return add_room_number(words, phrase)
+
+
+def check_lobo(words):
+    for word in words:
+        if word == "Lobo\'s":
+            return word
+
+
+def check_steve(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 2:
+            phrase = ' '.join(words[slice(i, i + 2)])
+            if phrase == "Stevenson Hall":
+                return add_room_number(words, phrase)
+
+
+def check_coop(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 2:
+            phrase = ' '.join(words[slice(i, i + 2)])
+            if phrase == "The Cooperage":
+                return phrase
+
+
+def check_student(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 2:
+            phrase = ' '.join(words[slice(i, i + 2)])
+            if phrase == "Student Center":
+                return phrase
+
+
+def check_GMC(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 3:
+            phrase = ' '.join(words[slice(i, i + 3)])
+            if phrase == "Green Music Center":
+                return phrase
 
 
 #
@@ -192,6 +267,51 @@ def get_open_to_public(event):
     return check_bool(value)
 
 
+def get_location(event):
+    """
+    The location names in the calendar can be excessively long and repetitive.
+    This function transforms an event's location into a speech-friendly value.
+    Returns the transformed location if a location is specified, otherwise None.
+    """
+    location = get_value("location", event)
+    if location is None:
+        return None
+
+    words = location.split()
+
+    green_music_center = check_GMC(words)
+    if green_music_center is not None:
+        return green_music_center
+
+    student_cent = check_student(words)
+    if student_cent is not None:
+        return student_cent
+
+    coop = check_coop(words)
+    if coop is not None:
+        return coop
+
+    stevenson_int = check_steve(words)
+    if stevenson_int is not None:
+        return stevenson_int
+
+    lobo = check_lobo(words)
+    if lobo is not None:
+        return lobo
+
+    ives = check_ives(words)
+    if ives is not None:
+        return ives
+
+    evert = check_evert(words)
+    if evert is not None:
+        return evert
+
+    gym = gym_check(words)
+    if gym is not None:
+        return gym
+
+
 # Helper for mapping None to ''
 def coalesce(val, repl):
     return repl if val is None else val
@@ -216,10 +336,10 @@ def get_record(event):
         "categories": get_categories(event),
         "all_day_event": get_all_day_event(event),
         "open_to_public": get_open_to_public(event),
+        "location": get_location(event),
 
         "title": getter("summary"),
         "description": getter("description"),
-        "location": getter("location"),
         "start": getter("dtstart"),
         "end": getter("dtend"),
         "event_uid": getter("uid"),

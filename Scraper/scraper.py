@@ -157,74 +157,74 @@ def check_bool(value):
         return None
 
 
-def add_room_number(array, shortened):
-    for word in array:
+def add_room_number(words, shortened):
+    for word in words:
         if word.isdigit():
             return shortened + ' ' + str(word)
 
 
-def gym_check(array):
-    for word in array:
+def gym_check(words):
+    for word in words:
         if word == "Physical":
             return "Gymnasium by the swimming pools"
 
 
-def check_evert(array):
-    arraylen = len(array)
-    for i in range(arraylen):
-        if arraylen - i >= 4:
-            phrase = ' '.join(array[slice(i, i + 4)])
+def check_evert(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 4:
+            phrase = ' '.join(words[slice(i, i + 4)])
             if phrase == "Evert B. Person Theatre":
                 return phrase
 
 
-def check_ives(array):
-    arraylen = len(array)
-    for i in range(arraylen):
-        if arraylen - i >= 2:
-            phrase = ' '.join(array[slice(i, i + 2)])
+def check_ives(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 2:
+            phrase = ' '.join(words[slice(i, i + 2)])
             if phrase == "Ives Hall":
-                return add_room_number(array, phrase)
+                return add_room_number(words, phrase)
 
 
-def check_lobo(array):
-    for word in array:
+def check_lobo(words):
+    for word in words:
         if word == "Lobo\'s":
             return word
 
 
-def check_steve(array):
-    arraylen = len(array)
-    for i in range(arraylen):
-        if arraylen - i >= 2:
-            phrase = ' '.join(array[slice(i, i + 2)])
+def check_steve(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 2:
+            phrase = ' '.join(words[slice(i, i + 2)])
             if phrase == "Stevenson Hall":
-                return add_room_number(array, phrase)
+                return add_room_number(words, phrase)
 
 
-def check_coop(array):
-    arraylen = len(array)
-    for i in range(arraylen):
-        if arraylen - i >= 2:
-            phrase = ' '.join(array[slice(i, i + 2)])
+def check_coop(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 2:
+            phrase = ' '.join(words[slice(i, i + 2)])
             if phrase == "The Cooperage":
                 return phrase
 
 
-def check_student(array):
-    arraylen = len(array)
-    for i in range(arraylen):
-        if arraylen - i >= 2:
-            phrase = ' '.join(array[slice(i, i + 2)])
+def check_student(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 2:
+            phrase = ' '.join(words[slice(i, i + 2)])
             if phrase == "Student Center":
                 return phrase
 
 
-def check_GMC(array):
-    arraylen = len(array)
-    for i in range(arraylen):
-        if arraylen - i >= 3:
-            phrase = ' '.join(array[slice(i, i + 3)])
+def check_GMC(words):
+    numwords = len(words)
+    for i in range(numwords):
+        if numwords - i >= 3:
+            phrase = ' '.join(words[slice(i, i + 3)])
             if phrase == "Green Music Center":
                 return phrase
 
@@ -273,46 +273,42 @@ def get_location(event):
     This function transforms an event's location into a speech-friendly value.
     Returns the transformed location if a location is specified, otherwise None.
     """
-    value = get_value("location", event)
-    if value is None:
+    location = get_value("location", event)
+    if location is None:
         return None
 
-    array = value.split()
+    words = location.split()
 
-    green_music_center = check_GMC(array)
-    if green_music_center == "Green Music Center":
+    green_music_center = check_GMC(words)
+    if green_music_center is not None:
         return green_music_center
 
-    student_cent = check_student(array)
-    if student_cent == "Student Center":
+    student_cent = check_student(words)
+    if student_cent is not None:
         return student_cent
 
-    coop = check_coop(array)
-    if coop == "The Cooperage":
+    coop = check_coop(words)
+    if coop is not None:
         return coop
 
-    stevenson_int = check_steve(array)
+    stevenson_int = check_steve(words)
     if stevenson_int is not None:
-        steve = stevenson_int.split()
-        if steve[0] == "Stevenson" and steve[1] == "Hall" and steve[2].isdigit():
-            return steve[0] + ' ' + steve[1] + ' ' + steve[2]
+        return stevenson_int
 
-    lobo = check_lobo(array)
-    if lobo == "Lobo\'s":
+    lobo = check_lobo(words)
+    if lobo is not None:
         return lobo
 
-    ives = check_ives(array)
+    ives = check_ives(words)
     if ives is not None:
-        ives_new = ives.split()
-        if ives_new[0] == "Ives" and ives_new[1] == "Hall" and ives_new[2].isdigit():
-            return ives_new[0] + ' ' + ives_new[1] + ' ' + ives_new[2]
+        return ives
 
-    evert = check_evert(array)
-    if evert == "Evert B. Person Theatre":
+    evert = check_evert(words)
+    if evert is not None:
         return evert
 
-    gym = gym_check(array)
-    if gym == "Gymnasium by the swimming pools.":
+    gym = gym_check(words)
+    if gym is not None:
         return gym
 
 

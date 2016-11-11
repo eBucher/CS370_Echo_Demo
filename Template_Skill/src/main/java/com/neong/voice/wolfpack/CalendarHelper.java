@@ -199,7 +199,7 @@ public class CalendarHelper {
 		final StringBuilder responseBuilder = new StringBuilder(eventsLength * format.length());
 
 		for (int i = 0; i < eventsLength; i++){
-			if(i == eventsLength - 1)
+			if(i == eventsLength - 1 && eventsLength != 1)
 				responseBuilder.append(" and ");
 			responseBuilder.append(formatEventSsml(format, events, i));
 		}
@@ -211,6 +211,7 @@ public class CalendarHelper {
 		String dateInProgressSsml = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(0));
 		String eventDateSsml;
 		String eventList = "On " + dateInProgressSsml + " there is ";
+		String nextDate;
 
 		for (int i = 0; i < events.get("start").size(); i++) {
 			eventDateSsml = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(i));
@@ -219,11 +220,11 @@ public class CalendarHelper {
 				eventList += ". On " + dateInProgressSsml + " there is: ";
 			} else {
 				eventList += ", ";
+				if(lastEventOnDay(events, i)){
+					eventList += "and ";
+				}
 			}	
-				
-			if(lastEventOnDay(events, i)){
-				eventList += "and ";
-			}
+
 			eventList += CalendarHelper.formatEventSsml(format, events, i);
 		}
 

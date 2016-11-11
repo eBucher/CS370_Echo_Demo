@@ -122,9 +122,9 @@ public class CalendarConversation extends Conversation {
 		String stateAttrib = (String) session.getAttribute(ATTRIB_STATEID);
 
 		if (stateAttrib == null)
-			state = null;
-		else
-		    state = SessionState.valueOf(stateAttrib);
+			return newBadStateResponse("handleStateSensitiveIntents");
+
+		state = SessionState.valueOf(stateAttrib);
 
 		switch (state) {
 		case USER_HEARD_EVENTS:

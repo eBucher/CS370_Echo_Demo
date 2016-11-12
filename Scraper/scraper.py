@@ -138,6 +138,8 @@ def get_custom_value(field_id, event):
     in the specified event.
     """
     int_field_id = int(field_id)
+    if 'x-trumba-customfield' not in event.contents:
+        return (None,)
     return (field.value for field in event.x_trumba_customfield_list
             if int(field.params['ID'][0]) == int_field_id)
 
@@ -229,6 +231,13 @@ def check_GMC(words):
                 return phrase
 
 
+def is_holiday(event):
+    description = get_value("description", event)
+    if description is None:
+        return False
+    return description.find("$school holiday$") > -1
+
+
 #
 # Getters for fields that need additional processing
 #
@@ -244,6 +253,8 @@ def get_categories(event):
     """
     basic = get_value("categories", event)
     custom = get_custom_value(3138, event)
+    if custom is None:
+        return []
     custom_list = custom.split(', ')
     return list(set(custom_list + basic))
 
@@ -312,6 +323,20 @@ def get_location(event):
         return gym
 
 
+def get_event_type(event):
+    event_type = get_custom_value(12, event)
+    if event_type is None:
+        event_type = "School Holiday" if is_holiday(event) else "Special"
+    return event_type
+
+
+def get_description(event):
+    description = get_value("description", event)
+    if description is None:
+        return ""
+    return description.replace("$school holiday$", "")
+
+
 # Helper for mapping None to ''
 def coalesce(val, repl):
     return repl if val is None else val
@@ -337,14 +362,14 @@ def get_record(event):
         "all_day_event": get_all_day_event(event),
         "open_to_public": get_open_to_public(event),
         "location": get_location(event),
+        "event_type": get_event_type(event),
+        "description": get_description(event),
 
         "title": getter("summary"),
-        "description": getter("description"),
         "start": getter("dtstart"),
         "end": getter("dtend"),
         "event_uid": getter("uid"),
 
-        "event_type": custom_getter(12),
         "website_url": custom_getter(3109),
         "student_admission_fee": custom_getter(3111),
         "general_admission_fee": custom_getter(3124),

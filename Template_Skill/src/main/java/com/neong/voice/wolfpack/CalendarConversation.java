@@ -614,7 +614,7 @@ public class CalendarConversation extends Conversation {
 	/**
 	 * Generic response for when we are missing a needed slot
 	 */
-	private static SpeechletResponse newBadSlotResponse(String slotName) {
+	public static SpeechletResponse newBadSlotResponse(String slotName) {
 		// FIXME: needs better messages?
 		String messageSsml = "Which " + slotName + " are you interested in?";
 
@@ -652,7 +652,7 @@ public class CalendarConversation extends Conversation {
 	 *         the specified response message.  Both the response message and the reprompt message
 	 *         get wrapped in {@code <speak>...</speak>} tags.
 	 */
-	private static SpeechletResponse newFailureResponse(String responseSsml, String repromptSsml) {
+	public static SpeechletResponse newFailureResponse(String responseSsml, String repromptSsml) {
 		return newAskResponse("<speak>Sorry. " + responseSsml + "</speak>", true,
 		                      "<speak>" + repromptSsml + "</speak>", true);
 	}
@@ -660,7 +660,7 @@ public class CalendarConversation extends Conversation {
 	/**
 	 * Generic response for when we experience an internal error
 	 */
-	private SpeechletResponse newInternalErrorResponse() {
+	public static SpeechletResponse newInternalErrorResponse() {
 		return newTellResponse("Sorry, I'm on break", false);
 	}
 

@@ -86,6 +86,12 @@ public class CalendarHelper {
 	}
 
 
+	public static String formatEventSsml(final String format,
+	                                     final Map<String, Vector<Object>> events) {
+		return formatEventSsml(format, events, 0);
+	}
+
+
 	public static String formatEventFieldSsml(final String field,
 	                                          final Map<String, Vector<Object>> events,
 	                                          final int index) {
@@ -127,12 +133,6 @@ public class CalendarHelper {
 		}
 
 		return result;
-	}
-
-
-	public static String formatEventSsml(final String format,
-	                                     final Map<String, Vector<Object>> events) {
-		return formatEventSsml(format, events, 0);
 	}
 
 

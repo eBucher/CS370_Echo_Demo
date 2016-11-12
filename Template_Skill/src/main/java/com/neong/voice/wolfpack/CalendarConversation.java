@@ -29,9 +29,9 @@ public class CalendarConversation extends Conversation {
 	// Intent names
 	private final static String INTENT_NEXTEVENT = "NextEventIntent";
 	private final static String INTENT_GETEVENTSONDATE = "GetEventsOnDateIntent";
-	private final static String INTENT_GETFEEDETAILS = "GetFeeDetailsIntent";
-	private final static String INTENT_GETLOCATIONDETAILS = "GetLocationDetailsIntent";
-	private final static String INTENT_GETENDTIME = "GetEndTimeIntent";
+	private final static String INTENT_GETFEEDETAIL = "GetFeeDetailIntent";
+	private final static String INTENT_GETLOCATIONDETAIL = "GetLocationDetailIntent";
+	private final static String INTENT_GETENDDETAIL = "GetEndDetailIntent";
 	private final static String INTENT_ALLCATEGORY = "AllCategoryIntent";
 	private final static String INTENT_SPORTSCATEGORY = "SportsCategoryIntent";
 	private final static String INTENT_ARTSANDENTERTAINMENTCATEGORY = "ArtsAndEntertainmentCategoryIntent";
@@ -68,9 +68,9 @@ public class CalendarConversation extends Conversation {
 		// Add custom intent names for dispatcher use.
 		supportedIntentNames.add(INTENT_NEXTEVENT);
 		supportedIntentNames.add(INTENT_GETEVENTSONDATE);
-		supportedIntentNames.add(INTENT_GETFEEDETAILS);
-		supportedIntentNames.add(INTENT_GETLOCATIONDETAILS);
-		supportedIntentNames.add(INTENT_GETENDTIME);
+		supportedIntentNames.add(INTENT_GETFEEDETAIL);
+		supportedIntentNames.add(INTENT_GETLOCATIONDETAIL);
+		supportedIntentNames.add(INTENT_GETENDDETAIL);
 		supportedIntentNames.add(INTENT_ALLCATEGORY);
 		supportedIntentNames.add(INTENT_SPORTSCATEGORY);
 		supportedIntentNames.add(INTENT_ARTSANDENTERTAINMENTCATEGORY);
@@ -151,16 +151,16 @@ public class CalendarConversation extends Conversation {
 		String intentName = intentReq.getIntent().getName();
 
 		switch (intentName) {
-		case INTENT_GETFEEDETAILS:
-			response = handleGetFeeDetailsIntent(intentReq, session);
+		case INTENT_GETFEEDETAIL:
+			response = handleGetFeeDetailIntent(intentReq, session);
 			break;
 
-		case INTENT_GETLOCATIONDETAILS:
-			response = handleGetLocationDetailsIntent(intentReq, session);
+		case INTENT_GETLOCATIONDETAIL:
+			response = handleGetLocationDetailIntent(intentReq, session);
 			break;
 
-		case INTENT_GETENDTIME:
-			response = handleGetEndTimeIntent(intentReq, session);
+		case INTENT_GETENDDETAIL:
+			response = handleGetEndDetailIntent(intentReq, session);
 			break;
 
 		default:
@@ -371,14 +371,14 @@ public class CalendarConversation extends Conversation {
 	}
 
 
-	private SpeechletResponse handleGetFeeDetailsIntent(IntentRequest intentReq, Session session) {
+	private SpeechletResponse handleGetFeeDetailIntent(IntentRequest intentReq, Session session) {
 		@SuppressWarnings("unchecked")
 		Map<String, Integer> savedEvents =
 			(HashMap<String, Integer>) session.getAttribute(ATTRIB_RECENTLYSAIDEVENTS);
 		final Set<String> savedEventNames = savedEvents.keySet();
 
 		if (savedEvents == null)
-			return newBadStateResponse("handleGetFeeDetailsIntent");
+			return newBadStateResponse("handleGetFeeDetailIntent");
 
 		Slot eventSlot = intentReq.getIntent().getSlot(SLOT_EVENT_NAME);
 		String eventNameSlotValue;
@@ -420,14 +420,14 @@ public class CalendarConversation extends Conversation {
 	}
 
 
-	private SpeechletResponse handleGetLocationDetailsIntent(IntentRequest intentReq, Session session) {
+	private SpeechletResponse handleGetLocationDetailIntent(IntentRequest intentReq, Session session) {
 		@SuppressWarnings("unchecked")
 		Map<String, Integer> savedEvents =
 			(HashMap<String, Integer>) session.getAttribute(ATTRIB_RECENTLYSAIDEVENTS);
 		final Set<String> savedEventNames = savedEvents.keySet();
 
 		if (savedEvents == null)
-			return newBadStateResponse("handleGetLocationDetailsIntent");
+			return newBadStateResponse("handleGetLocationDetailIntent");
 
 		Slot eventSlot = intentReq.getIntent().getSlot(SLOT_EVENT_NAME);
 		String eventNameSlotValue;
@@ -469,7 +469,7 @@ public class CalendarConversation extends Conversation {
 	}
 
 
-	private SpeechletResponse handleGetEndTimeIntent(IntentRequest intentReq, Session session) {
+	private SpeechletResponse handleGetEndDetailIntent(IntentRequest intentReq, Session session) {
 		@SuppressWarnings("unchecked")
 		Map<String, Integer> savedEvents =
 			(HashMap<String, Integer>) session.getAttribute(ATTRIB_RECENTLYSAIDEVENTS);

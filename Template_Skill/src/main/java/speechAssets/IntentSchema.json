@@ -10,7 +10,7 @@
       ]
     },
     {
-      "intent": "GetFeeDetailsIntent",
+      "intent": "GetFeeDetailIntent",
         "slots": [
           {
             "name": "eventName",
@@ -19,7 +19,7 @@
         ]
     },
     {
-      "intent": "GetLocationDetailsIntent",
+      "intent": "GetLocationDetailIntent",
         "slots": [
           {
             "name": "eventName",
@@ -28,7 +28,7 @@
         ]
     },
     {
-      "intent": "GetEndTimeIntent",
+      "intent": "GetEndDetailIntent",
         "slots": [
           {
             "name": "eventName",

@@ -98,23 +98,23 @@ ClubsCategoryIntent club things
 ClubsCategoryIntent club meetings
 ClubsCategoryIntent club gatherings
 
-GetEndTimeIntent What time is {eventName} over
-GetEndTimeIntent What time is {eventName} end
-GetEndTimeIntent What time is {eventName} finish
-GetEndTimeIntent What time is {eventName} done
-GetEndTimeIntent What time does {eventName} over
-GetEndTimeIntent What time does {eventName} end
-GetEndTimeIntent What time does {eventName} finish
-GetEndTimeIntent What time does {eventName} done
+GetEndDetailIntent What time is {eventName} over
+GetEndDetailIntent What time is {eventName} end
+GetEndDetailIntent What time is {eventName} finish
+GetEndDetailIntent What time is {eventName} done
+GetEndDetailIntent What time does {eventName} over
+GetEndDetailIntent What time does {eventName} end
+GetEndDetailIntent What time does {eventName} finish
+GetEndDetailIntent What time does {eventName} done
 
-GetEndTimeIntent When is {eventName} end
-GetEndTimeIntent When is {eventName} over
-GetEndTimeIntent When is {eventName} finished
-GetEndTimeIntent When is {eventName} done
-GetEndTimeIntent When does {eventName} end
-GetEndTimeIntent When does {eventName} over
-GetEndTimeIntent When does {eventName} finished
-GetEndTimeIntent When does {eventName} done
+GetEndDetailIntent When is {eventName} end
+GetEndDetailIntent When is {eventName} over
+GetEndDetailIntent When is {eventName} finished
+GetEndDetailIntent When is {eventName} done
+GetEndDetailIntent When does {eventName} end
+GetEndDetailIntent When does {eventName} over
+GetEndDetailIntent When does {eventName} finished
+GetEndDetailIntent When does {eventName} done
 
 GetEventsOnDateIntent what is happening on {date}
 GetEventsOnDateIntent what is happening for {date}
@@ -161,69 +161,69 @@ GetEventsOnDateIntent whats destined for {date}
 GetEventsOnDateIntent whats the future on {date}
 GetEventsOnDateIntent whats the future for {date}
 
-GetFeeDetailsIntent Whats the price for {eventName}
-GetFeeDetailsIntent Whats the price of {eventName}
-GetFeeDetailsIntent Whats it cost for {eventName}
-GetFeeDetailsIntent Whats it cost to attend {eventName}
-GetFeeDetailsIntent Whats the cost to go to {eventName}
-GetFeeDetailsIntent Whats the cost to attend {eventName}
-GetFeeDetailsIntent what is the price for {eventName}
-GetFeeDetailsIntent what is the price of {eventName}
-GetFeeDetailsIntent what is it cost for {eventName}
-GetFeeDetailsIntent what is it cost to attend {eventName}
-GetFeeDetailsIntent what is the cost to go to {eventName}
-GetFeeDetailsIntent what is the cost to attend {eventName}
+GetFeeDetailIntent Whats the price for {eventName}
+GetFeeDetailIntent Whats the price of {eventName}
+GetFeeDetailIntent Whats it cost for {eventName}
+GetFeeDetailIntent Whats it cost to attend {eventName}
+GetFeeDetailIntent Whats the cost to go to {eventName}
+GetFeeDetailIntent Whats the cost to attend {eventName}
+GetFeeDetailIntent what is the price for {eventName}
+GetFeeDetailIntent what is the price of {eventName}
+GetFeeDetailIntent what is it cost for {eventName}
+GetFeeDetailIntent what is it cost to attend {eventName}
+GetFeeDetailIntent what is the cost to go to {eventName}
+GetFeeDetailIntent what is the cost to attend {eventName}
 
-GetFeeDetailsIntent How much money do tickets cost for {eventName}
-GetFeeDetailsIntent How much moneys do tickets cost for {eventName}
-GetFeeDetailsIntent How much bucks do tickets cost for {eventName}
-GetFeeDetailsIntent How much buckaroos do tickets cost for {eventName}
-GetFeeDetailsIntent How much cash do tickets cost for {eventName}
-GetFeeDetailsIntent How much dough do tickets cost for {eventName}
-GetFeeDetailsIntent How much green do tickets cost for {eventName}
-GetFeeDetailsIntent How much smackaroos do tickets cost for {eventName}
-GetFeeDetailsIntent How much wolfbucks do tickets cost for {eventName}
+GetFeeDetailIntent How much money do tickets cost for {eventName}
+GetFeeDetailIntent How much moneys do tickets cost for {eventName}
+GetFeeDetailIntent How much bucks do tickets cost for {eventName}
+GetFeeDetailIntent How much buckaroos do tickets cost for {eventName}
+GetFeeDetailIntent How much cash do tickets cost for {eventName}
+GetFeeDetailIntent How much dough do tickets cost for {eventName}
+GetFeeDetailIntent How much green do tickets cost for {eventName}
+GetFeeDetailIntent How much smackaroos do tickets cost for {eventName}
+GetFeeDetailIntent How much wolfbucks do tickets cost for {eventName}
 
-GetFeeDetailsIntent How much are tickets {eventName}
-GetFeeDetailsIntent How much are seats {eventName}
-GetFeeDetailsIntent How much are tickets for {eventName}
-GetFeeDetailsIntent How much are seats for {eventName}
-GetFeeDetailsIntent How much are prices for {eventName}
+GetFeeDetailIntent How much are tickets {eventName}
+GetFeeDetailIntent How much are seats {eventName}
+GetFeeDetailIntent How much are tickets for {eventName}
+GetFeeDetailIntent How much are seats for {eventName}
+GetFeeDetailIntent How much are prices for {eventName}
 
-GetFeeDetailsIntent How much do tickets cost for {eventName}
-GetFeeDetailsIntent How much do seats cost for {eventName}
+GetFeeDetailIntent How much do tickets cost for {eventName}
+GetFeeDetailIntent How much do seats cost for {eventName}
 
-GetFeeDetailsIntent How much does it cost to go to {eventName}
-GetFeeDetailsIntent How much does it cost to attend {eventName}
-GetFeeDetailsIntent How much does tickets for cost {eventName}
+GetFeeDetailIntent How much does it cost to go to {eventName}
+GetFeeDetailIntent How much does it cost to attend {eventName}
+GetFeeDetailIntent How much does tickets for cost {eventName}
 
-GetLocationDetailsIntent Where is {eventName} at
-GetLocationDetailsIntent Where is {eventName} going to be
-GetLocationDetailsIntent Where is {eventName} happening
-GetLocationDetailsIntent Where is {eventName} located
-GetLocationDetailsIntent Where is {eventName} located at
-GetLocationDetailsIntent Where is {eventName} going on
-GetLocationDetailsIntent Where is {eventName} being held
-GetLocationDetailsIntent Where is {eventName} being held at
-GetLocationDetailsIntent Wheres {eventName} at
-GetLocationDetailsIntent Wheres {eventName} going to be
-GetLocationDetailsIntent Wheres {eventName} happening
-GetLocationDetailsIntent Wheres {eventName} located
-GetLocationDetailsIntent Wheres {eventName} located at
-GetLocationDetailsIntent Wheres {eventName} going on
-GetLocationDetailsIntent Wheres {eventName} being held
-GetLocationDetailsIntent Wheres {eventName} being held at
+GetLocationDetailIntent Where is {eventName} at
+GetLocationDetailIntent Where is {eventName} going to be
+GetLocationDetailIntent Where is {eventName} happening
+GetLocationDetailIntent Where is {eventName} located
+GetLocationDetailIntent Where is {eventName} located at
+GetLocationDetailIntent Where is {eventName} going on
+GetLocationDetailIntent Where is {eventName} being held
+GetLocationDetailIntent Where is {eventName} being held at
+GetLocationDetailIntent Wheres {eventName} at
+GetLocationDetailIntent Wheres {eventName} going to be
+GetLocationDetailIntent Wheres {eventName} happening
+GetLocationDetailIntent Wheres {eventName} located
+GetLocationDetailIntent Wheres {eventName} located at
+GetLocationDetailIntent Wheres {eventName} going on
+GetLocationDetailIntent Wheres {eventName} being held
+GetLocationDetailIntent Wheres {eventName} being held at
 
-GetLocationDetailsIntent Wheres {eventName}
-GetLocationDetailsIntent where is {eventName}
+GetLocationDetailIntent Wheres {eventName}
+GetLocationDetailIntent where is {eventName}
 
-GetLocationDetailsIntent Where will {eventName} be at
-GetLocationDetailsIntent Where will {eventName} be happening
-GetLocationDetailsIntent Where will {eventName} be located
-GetLocationDetailsIntent Where will {eventName} be located at
-GetLocationDetailsIntent Where will {eventName} be going on
-GetLocationDetailsIntent Where will {eventName} be held
-GetLocationDetailsIntent Where will {eventName} be held at
+GetLocationDetailIntent Where will {eventName} be at
+GetLocationDetailIntent Where will {eventName} be happening
+GetLocationDetailIntent Where will {eventName} be located
+GetLocationDetailIntent Where will {eventName} be located at
+GetLocationDetailIntent Where will {eventName} be going on
+GetLocationDetailIntent Where will {eventName} be held
+GetLocationDetailIntent Where will {eventName} be held at
 
 LecturesCategoryIntent lectures
 LecturesCategoryIntent talks

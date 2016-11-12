@@ -10,17 +10,17 @@ ArtsAndEntertainmentCategoryIntent (tell me about|I want to hear about|lets do|l
 ArtsAndEntertainmentCategoryIntent (the arts and entertainment category|the art category|the entertainment category|art|arts and entertainment|shows|performances|cool art stuff)
 ClubsCategoryIntent (tell me about|I want to hear about|lets do|lets hear about|how about) (the clubs category|clubs|club stuff|club things|club meetings|club gatherings)
 ClubsCategoryIntent (the clubs category|clubs|club stuff|club things|club meetings|club gatherings)
-GetEndTimeIntent What time (is|does) {eventName} (over|end|finish|done)
-GetEndTimeIntent When (is|does) {eventName} (end|over|finished|done)
+GetEndDetailIntent What time (is|does) {eventName} (over|end|finish|done)
+GetEndDetailIntent When (is|does) {eventName} (end|over|finished|done)
 GetEventsOnDateIntent (what is|what's) (|happening|going on|coming up|the haps|occurring|scheduled|on the calendar|cool|ahead|destined|the future) (on|for) {date}
-GetFeeDetailsIntent (What's|what is) (the price for|the price of|it cost for|it cost to attend|the cost to go to|the cost to attend) {eventName}
-GetFeeDetailsIntent How much (money|moneys|bucks|buckaroos|cash|dough|green|smackaroos|wolfbucks) do tickets cost for {eventName}
-GetFeeDetailsIntent How much are (tickets|seats|tickets for|seats for|prices for) {eventName}
-GetFeeDetailsIntent How much do (tickets cost|seats cost) for {eventName}
-GetFeeDetailsIntent How much does (it cost to go to|it cost to attend|tickets for cost) {eventName}
-GetLocationDetailsIntent (Where is|Where's) {eventName} (at|going to be|happening|located|located at|going on|being held|being held at)
-GetLocationDetailsIntent (Where's|where is) {eventName}
-GetLocationDetailsIntent Where will {eventName} be (at|happening|located|located at|going on|held|held at)
+GetFeeDetailIntent (What's|what is) (the price for|the price of|it cost for|it cost to attend|the cost to go to|the cost to attend) {eventName}
+GetFeeDetailIntent How much (money|moneys|bucks|buckaroos|cash|dough|green|smackaroos|wolfbucks) do tickets cost for {eventName}
+GetFeeDetailIntent How much are (tickets|seats|tickets for|seats for|prices for) {eventName}
+GetFeeDetailIntent How much do (tickets cost|seats cost) for {eventName}
+GetFeeDetailIntent How much does (it cost to go to|it cost to attend|tickets for cost) {eventName}
+GetLocationDetailIntent (Where is|Where's) {eventName} (at|going to be|happening|located|located at|going on|being held|being held at)
+GetLocationDetailIntent (Where's|where is) {eventName}
+GetLocationDetailIntent Where will {eventName} be (at|happening|located|located at|going on|held|held at)
 LecturesCategoryIntent (lectures|talks|speeches|colloquiums|teachings|the lecture category|talks and lessons)
 LecturesCategoryIntent (tell me about|I want to hear about|lets do|lets hear about|how about) (lectures|talks|speeches|colloquiums|teachings|the lecture category|talks and lessons)
 NextEventIntent (the next|the next upcoming) (|big) (thing|event|party till you drop|fun time|good time|fun thing|good thing|show|gathering|occasion|affair|shindig)

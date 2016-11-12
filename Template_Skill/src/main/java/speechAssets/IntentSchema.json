@@ -37,6 +37,15 @@
         ]
     },
     {
+      "intent": "WhenIsAcademicEventIntent",
+        "slots": [
+          {
+            "name": "AcademicEvent",
+            "type": "LIST_OF_ACADEMIC_EVENTS"
+          }
+        ]
+    },
+    {
       "intent": "AllCategoryIntent"
     },
     {

@@ -478,3 +478,17 @@ GetLocationDetailIntent Where will {eventName} be located at
 GetLocationDetailIntent Where will {eventName} be going on
 GetLocationDetailIntent Where will {eventName} be held
 GetLocationDetailIntent Where will {eventName} be held at
+
+
+
+WhenIsAcademicEventIntent when is {AcademicEvent} over
+WhenIsAcademicEventIntent when is {AcademicEvent}  
+
+WhenIsAcademicEventIntent what day does {AcademicEvent} start
+WhenIsAcademicEventIntent what day does {AcademicEvent} begin
+WhenIsAcademicEventIntent what day does {AcademicEvent} end
+WhenIsAcademicEventIntent what day does {AcademicEvent} finish
+WhenIsAcademicEventIntent when does {AcademicEvent} start
+WhenIsAcademicEventIntent when does {AcademicEvent} begin
+WhenIsAcademicEventIntent when does {AcademicEvent} end
+WhenIsAcademicEventIntent when does {AcademicEvent} finish

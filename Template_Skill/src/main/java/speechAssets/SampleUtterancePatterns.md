@@ -5,6 +5,13 @@ Documentation for utterances can be found here:
 https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/supported-phrases-to-begin-a-conversation
 
 ```
+AMAZON.CancelIntent (cancel|forget it|never mind)
+AMAZON.HelpIntent I need help
+AMAZON.HelpIntent can you help me with something
+AMAZON.HelpIntent help ( |me)
+AMAZON.NoIntent (no|nope) ( |thank you|thanks)
+AMAZON.StopIntent (end|finish|quit|stop)
+
 GetEventsOnDateIntent (what is|what's) ( |happening|going on|coming up|the haps|occurring|scheduled|on the calendar|cool|ahead|destined|the future) (on|for) {date}
 NextEventIntent next (thing|event|show|meeting)
 NextEventIntent (thing|event|show|meeting) ( |happening) (soon|next)

@@ -16,11 +16,46 @@ import com.neong.voice.model.base.Conversation;
 import com.wolfpack.database.DbConnection;
 
 public class AcademicCalendar extends Conversation {
-	//Intents
-	private final static String INTENT_WHEN_IS_ACADEMIC_EVENT = "WhenIsAcademicEventIntent";
+	// Intents
+	private enum AcademicIntent {
+		WHEN_IS_ACADEMIC_EVENT("WhenIsAcademicEventIntent");
 
-	//Slots
-	private final static String SLOT_ACADEMIC_EVENT = "AcademicEvent";
+		private final String value;
+		private AcademicIntent(String value) { this.value = value; }
+		@Override public String toString() { return value; }
+
+		public static AcademicIntent valueOf(IntentRequest intentReq) {
+			// Intent requests are dispatched to us by name,
+			// so we always know the intent and name are non-null.
+			String intentName = intentReq.getIntent().getName();
+			if (intentName == null)
+				return null;
+
+			for (AcademicIntent intent : AcademicIntent.values()) {
+				if (intentName.equals(intent.value))
+					return intent;
+			}
+
+			return null;
+		}
+	}
+
+	// Slots
+	private enum AcademicSlot {
+		ACADEMIC_EVENT("AcademicEvent");
+
+		private final String value;
+		private AcademicSlot(String value) { this.value = value; }
+		@Override public String toString() { return value; }
+
+		public static String getRequestSlotValue(IntentRequest intentReq, AcademicSlot slot) {
+			String slotName = slot.toString();
+			Slot intentSlot = intentReq.getIntent().getSlot(slotName);
+			if (intentSlot == null)
+				return null;
+			return intentSlot.getValue();
+		}
+	}
 
 	private final static Map<String, String> synonyms;
 
@@ -53,19 +88,19 @@ public class AcademicCalendar extends Conversation {
 		db.runQuery("SET timezone='" + CalendarHelper.TIME_ZONE + "'");
 
 		// Add custom intent names for dispatcher use.
-		supportedIntentNames.add(INTENT_WHEN_IS_ACADEMIC_EVENT);
+		for (AcademicIntent intent : AcademicIntent.values())
+			supportedIntentNames.add(intent.toString());
 	}
 
 	@Override
 	public SpeechletResponse respondToIntentRequest(IntentRequest intentReq, Session session) {
 		SpeechletResponse response;
-		// Intent requests are dispatched to us by name,
-		// so we always know the intent and name are non-null.
-		String intentName = intentReq.getIntent().getName();
 
-		switch (intentName) {
+		AcademicIntent intent = AcademicIntent.valueOf(intentReq);
 
-		case INTENT_WHEN_IS_ACADEMIC_EVENT:
+		switch (intent) {
+
+		case WHEN_IS_ACADEMIC_EVENT:
 			response = handleWhenIsIntent(intentReq, session);
 			break;
 
@@ -78,10 +113,8 @@ public class AcademicCalendar extends Conversation {
 	}
 
 	private SpeechletResponse handleWhenIsIntent(IntentRequest intentReq, Session session) {
-		Slot eventSlot = intentReq.getIntent().getSlot(SLOT_ACADEMIC_EVENT);
-		String givenEvent;
-
-		if (eventSlot == null || (givenEvent = eventSlot.getValue()) == null)
+		String givenEvent = AcademicSlot.getRequestSlotValue(intentReq, AcademicSlot.ACADEMIC_EVENT);
+		if (givenEvent == null)
 			return CalendarConversation.newBadSlotResponse("academic event");
 
 		String eventName = Synonym.getSynonym(givenEvent, synonyms);

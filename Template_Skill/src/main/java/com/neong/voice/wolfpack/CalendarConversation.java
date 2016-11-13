@@ -416,7 +416,7 @@ public class CalendarConversation extends Conversation {
 
 		String eventSsml = CalendarHelper.formatEventSsml(eventFormat, results);
 
-		return newAffirmativeResponse(eventSsml, "Would you like anymore info?");
+		return newAffirmativeResponse(eventSsml, "Would you like any more info?");
 	}
 
 

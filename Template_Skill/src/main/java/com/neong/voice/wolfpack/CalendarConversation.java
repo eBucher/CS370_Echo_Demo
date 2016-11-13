@@ -31,15 +31,15 @@ public class CalendarConversation extends Conversation {
 		NEXT_EVENT("NextEventIntent"),
 		GET_EVENTS_ON_DATE ("GetEventsOnDateIntent"),
 
+		GET_END_DETAIL("GetEndDetailIntent"),
 		GET_FEE_DETAIL("GetFeeDetailIntent"),
 		GET_LOCATION_DETAIL("GetLocationDetailIntent"),
-		GET_END_DETAIL("GetEndDetailIntent"),
 
 		ALL_CATEGORY("AllCategoryIntent"),
-		SPORTS_CATEGORY("SportsCategoryIntent"),
 		ARTS_AND_ENTERTAINMENT_CATEGORY("ArtsAndEntertainmentCategoryIntent"),
+		CLUBS_CATEGORY("ClubsCategoryIntent"),
 		LECTURES_CATEGORY("LecturesCategoryIntent"),
-		CLUBS_CATEGORY("ClubsCategoryIntent");
+		SPORTS_CATEGORY("SportsCategoryIntent");
 
 		private final String value;
 		private CalendarIntent(String value) { this.value = value; }
@@ -49,7 +49,15 @@ public class CalendarConversation extends Conversation {
 			// Intent requests are dispatched to us by name,
 			// so we always know the intent and name are non-null.
 			String intentName = intentReq.getIntent().getName();
-			return valueOf(intentName);
+			if (intentName == null)
+				return null;
+
+			for (CalendarIntent intent : CalendarIntent.values()) {
+				if (intentName.equals(intent.value))
+					return intent;
+			}
+
+			return null;
 		}
 	}
 

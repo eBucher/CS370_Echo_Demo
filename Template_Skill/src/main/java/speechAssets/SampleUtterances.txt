@@ -11,6 +11,14 @@ AllCategoryIntent I want to hear about all the categories
 AllCategoryIntent tell me about all the categories
 AllCategoryIntent gotta catch them all
 
+ArtsAndEntertainmentCategoryIntent the arts and entertainment category
+ArtsAndEntertainmentCategoryIntent the art category
+ArtsAndEntertainmentCategoryIntent the entertainment category
+ArtsAndEntertainmentCategoryIntent art
+ArtsAndEntertainmentCategoryIntent arts and entertainment
+ArtsAndEntertainmentCategoryIntent shows
+ArtsAndEntertainmentCategoryIntent performances
+ArtsAndEntertainmentCategoryIntent cool art stuff
 ArtsAndEntertainmentCategoryIntent tell me about the arts and entertainment category
 ArtsAndEntertainmentCategoryIntent tell me about the art category
 ArtsAndEntertainmentCategoryIntent tell me about the entertainment category
@@ -52,15 +60,12 @@ ArtsAndEntertainmentCategoryIntent how about shows
 ArtsAndEntertainmentCategoryIntent how about performances
 ArtsAndEntertainmentCategoryIntent how about cool art stuff
 
-ArtsAndEntertainmentCategoryIntent the arts and entertainment category
-ArtsAndEntertainmentCategoryIntent the art category
-ArtsAndEntertainmentCategoryIntent the entertainment category
-ArtsAndEntertainmentCategoryIntent art
-ArtsAndEntertainmentCategoryIntent arts and entertainment
-ArtsAndEntertainmentCategoryIntent shows
-ArtsAndEntertainmentCategoryIntent performances
-ArtsAndEntertainmentCategoryIntent cool art stuff
-
+ClubsCategoryIntent the clubs category
+ClubsCategoryIntent clubs
+ClubsCategoryIntent club stuff
+ClubsCategoryIntent club things
+ClubsCategoryIntent club meetings
+ClubsCategoryIntent club gatherings
 ClubsCategoryIntent tell me about the clubs category
 ClubsCategoryIntent tell me about clubs
 ClubsCategoryIntent tell me about club stuff
@@ -92,13 +97,6 @@ ClubsCategoryIntent how about club things
 ClubsCategoryIntent how about club meetings
 ClubsCategoryIntent how about club gatherings
 
-ClubsCategoryIntent the clubs category
-ClubsCategoryIntent clubs
-ClubsCategoryIntent club stuff
-ClubsCategoryIntent club things
-ClubsCategoryIntent club meetings
-ClubsCategoryIntent club gatherings
-
 GetEndDetailIntent What time is {eventName} over
 GetEndDetailIntent What time is {eventName} end
 GetEndDetailIntent What time is {eventName} finish
@@ -117,6 +115,8 @@ GetEndDetailIntent When does {eventName} over
 GetEndDetailIntent When does {eventName} finished
 GetEndDetailIntent When does {eventName} done
 
+GetEventsOnDateIntent what is on {date}
+GetEventsOnDateIntent what is for {date}
 GetEventsOnDateIntent what is happening on {date}
 GetEventsOnDateIntent what is happening for {date}
 GetEventsOnDateIntent what is going on on {date}
@@ -139,6 +139,8 @@ GetEventsOnDateIntent what is destined on {date}
 GetEventsOnDateIntent what is destined for {date}
 GetEventsOnDateIntent what is the future on {date}
 GetEventsOnDateIntent what is the future for {date}
+GetEventsOnDateIntent what's on {date}
+GetEventsOnDateIntent what's for {date}
 GetEventsOnDateIntent what's happening on {date}
 GetEventsOnDateIntent what's happening for {date}
 GetEventsOnDateIntent what's going on on {date}
@@ -162,6 +164,12 @@ GetEventsOnDateIntent what's destined for {date}
 GetEventsOnDateIntent what's the future on {date}
 GetEventsOnDateIntent what's the future for {date}
 
+GetFeeDetailIntent the price for {eventName}
+GetFeeDetailIntent the price of {eventName}
+GetFeeDetailIntent it cost for {eventName}
+GetFeeDetailIntent it cost to attend {eventName}
+GetFeeDetailIntent the cost to go to {eventName}
+GetFeeDetailIntent the cost to attend {eventName}
 GetFeeDetailIntent What's the price for {eventName}
 GetFeeDetailIntent What's the price of {eventName}
 GetFeeDetailIntent What's it cost for {eventName}
@@ -232,9 +240,9 @@ LecturesCategoryIntent lectures
 LecturesCategoryIntent talks
 LecturesCategoryIntent speeches
 LecturesCategoryIntent colloquiums
+LecturesCategoryIntent teachings
 LecturesCategoryIntent the lecture category
 LecturesCategoryIntent talks and lessons
-
 LecturesCategoryIntent tell me about lectures
 LecturesCategoryIntent tell me about talks
 LecturesCategoryIntent tell me about speeches
@@ -276,99 +284,114 @@ NextEventIntent next event
 NextEventIntent next show
 NextEventIntent next meeting
 
-NextEventIntent thing happening soon
-NextEventIntent thing happening next
 NextEventIntent thing soon
 NextEventIntent thing next
-NextEventIntent event happening soon
-NextEventIntent event happening next
+NextEventIntent thing happening soon
+NextEventIntent thing happening next
 NextEventIntent event soon
 NextEventIntent event next
-NextEventIntent show happening soon
-NextEventIntent show happening next
+NextEventIntent event happening soon
+NextEventIntent event happening next
 NextEventIntent show soon
 NextEventIntent show next
-NextEventIntent meeting happening soon
-NextEventIntent meeting happening next
+NextEventIntent show happening soon
+NextEventIntent show happening next
 NextEventIntent meeting soon
 NextEventIntent meeting next
+NextEventIntent meeting happening soon
+NextEventIntent meeting happening next
 
+NextEventIntent what is the next event  
 NextEventIntent what is the next event on the calendar
-NextEventIntent what is the next event
+NextEventIntent what is coming up  
 NextEventIntent what is coming up on the calendar
-NextEventIntent what is coming up
+NextEventIntent what's the next event  
 NextEventIntent what's the next event on the calendar
-NextEventIntent what's the next event
+NextEventIntent what's coming up  
 NextEventIntent what's coming up on the calendar
-NextEventIntent what's coming up
 
+NextEventIntent something to do soon
+NextEventIntent something to do coming up
 NextEventIntent something to do that's soon
 NextEventIntent something to do that's coming up
 NextEventIntent something to do that is soon
 NextEventIntent something to do that is coming up
+NextEventIntent something fun soon
+NextEventIntent something fun coming up
 NextEventIntent something fun that's soon
 NextEventIntent something fun that's coming up
 NextEventIntent something fun that is soon
 NextEventIntent something fun that is coming up
 
-SportsCategoryIntent tell me about sports category
-SportsCategoryIntent tell me about sports stuff
-SportsCategoryIntent tell me about sports games
-SportsCategoryIntent tell me about sports events
-SportsCategoryIntent tell me about sports matches
-SportsCategoryIntent tell me about athletics category
-SportsCategoryIntent tell me about athletics stuff
-SportsCategoryIntent tell me about athletics games
-SportsCategoryIntent tell me about athletics events
-SportsCategoryIntent tell me about athletics matches
-SportsCategoryIntent I want to hear about sports category
-SportsCategoryIntent I want to hear about sports stuff
-SportsCategoryIntent I want to hear about sports games
-SportsCategoryIntent I want to hear about sports events
-SportsCategoryIntent I want to hear about sports matches
-SportsCategoryIntent I want to hear about athletics category
-SportsCategoryIntent I want to hear about athletics stuff
-SportsCategoryIntent I want to hear about athletics games
-SportsCategoryIntent I want to hear about athletics events
-SportsCategoryIntent I want to hear about athletics matches
-SportsCategoryIntent lets do sports category
-SportsCategoryIntent lets do sports stuff
-SportsCategoryIntent lets do sports games
-SportsCategoryIntent lets do sports events
-SportsCategoryIntent lets do sports matches
-SportsCategoryIntent lets do athletics category
-SportsCategoryIntent lets do athletics stuff
-SportsCategoryIntent lets do athletics games
-SportsCategoryIntent lets do athletics events
-SportsCategoryIntent lets do athletics matches
-SportsCategoryIntent lets hear about sports category
-SportsCategoryIntent lets hear about sports stuff
-SportsCategoryIntent lets hear about sports games
-SportsCategoryIntent lets hear about sports events
-SportsCategoryIntent lets hear about sports matches
-SportsCategoryIntent lets hear about athletics category
-SportsCategoryIntent lets hear about athletics stuff
-SportsCategoryIntent lets hear about athletics games
-SportsCategoryIntent lets hear about athletics events
-SportsCategoryIntent lets hear about athletics matches
-SportsCategoryIntent how about sports category
-SportsCategoryIntent how about sports stuff
-SportsCategoryIntent how about sports games
-SportsCategoryIntent how about sports events
-SportsCategoryIntent how about sports matches
-SportsCategoryIntent how about athletics category
-SportsCategoryIntent how about athletics stuff
-SportsCategoryIntent how about athletics games
-SportsCategoryIntent how about athletics events
-SportsCategoryIntent how about athletics matches
-
+SportsCategoryIntent sports  
 SportsCategoryIntent sports category
 SportsCategoryIntent sports stuff
 SportsCategoryIntent sports games
 SportsCategoryIntent sports events
 SportsCategoryIntent sports matches
+SportsCategoryIntent athletics  
 SportsCategoryIntent athletics category
 SportsCategoryIntent athletics stuff
 SportsCategoryIntent athletics games
 SportsCategoryIntent athletics events
 SportsCategoryIntent athletics matches
+SportsCategoryIntent tell me about sports  
+SportsCategoryIntent tell me about sports category
+SportsCategoryIntent tell me about sports stuff
+SportsCategoryIntent tell me about sports games
+SportsCategoryIntent tell me about sports events
+SportsCategoryIntent tell me about sports matches
+SportsCategoryIntent tell me about athletics  
+SportsCategoryIntent tell me about athletics category
+SportsCategoryIntent tell me about athletics stuff
+SportsCategoryIntent tell me about athletics games
+SportsCategoryIntent tell me about athletics events
+SportsCategoryIntent tell me about athletics matches
+SportsCategoryIntent I want to hear about sports  
+SportsCategoryIntent I want to hear about sports category
+SportsCategoryIntent I want to hear about sports stuff
+SportsCategoryIntent I want to hear about sports games
+SportsCategoryIntent I want to hear about sports events
+SportsCategoryIntent I want to hear about sports matches
+SportsCategoryIntent I want to hear about athletics  
+SportsCategoryIntent I want to hear about athletics category
+SportsCategoryIntent I want to hear about athletics stuff
+SportsCategoryIntent I want to hear about athletics games
+SportsCategoryIntent I want to hear about athletics events
+SportsCategoryIntent I want to hear about athletics matches
+SportsCategoryIntent lets do sports  
+SportsCategoryIntent lets do sports category
+SportsCategoryIntent lets do sports stuff
+SportsCategoryIntent lets do sports games
+SportsCategoryIntent lets do sports events
+SportsCategoryIntent lets do sports matches
+SportsCategoryIntent lets do athletics  
+SportsCategoryIntent lets do athletics category
+SportsCategoryIntent lets do athletics stuff
+SportsCategoryIntent lets do athletics games
+SportsCategoryIntent lets do athletics events
+SportsCategoryIntent lets do athletics matches
+SportsCategoryIntent lets hear about sports  
+SportsCategoryIntent lets hear about sports category
+SportsCategoryIntent lets hear about sports stuff
+SportsCategoryIntent lets hear about sports games
+SportsCategoryIntent lets hear about sports events
+SportsCategoryIntent lets hear about sports matches
+SportsCategoryIntent lets hear about athletics  
+SportsCategoryIntent lets hear about athletics category
+SportsCategoryIntent lets hear about athletics stuff
+SportsCategoryIntent lets hear about athletics games
+SportsCategoryIntent lets hear about athletics events
+SportsCategoryIntent lets hear about athletics matches
+SportsCategoryIntent how about sports  
+SportsCategoryIntent how about sports category
+SportsCategoryIntent how about sports stuff
+SportsCategoryIntent how about sports games
+SportsCategoryIntent how about sports events
+SportsCategoryIntent how about sports matches
+SportsCategoryIntent how about athletics  
+SportsCategoryIntent how about athletics category
+SportsCategoryIntent how about athletics stuff
+SportsCategoryIntent how about athletics games
+SportsCategoryIntent how about athletics events
+SportsCategoryIntent how about athletics matches

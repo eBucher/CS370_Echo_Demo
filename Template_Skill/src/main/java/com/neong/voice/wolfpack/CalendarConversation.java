@@ -27,35 +27,93 @@ import java.util.Vector;
 
 public class CalendarConversation extends Conversation {
 	// Intent names
-	private final static String INTENT_NEXTEVENT = "NextEventIntent";
-	private final static String INTENT_GETEVENTSONDATE = "GetEventsOnDateIntent";
-	private final static String INTENT_GETFEEDETAIL = "GetFeeDetailIntent";
-	private final static String INTENT_GETLOCATIONDETAIL = "GetLocationDetailIntent";
-	private final static String INTENT_GETENDDETAIL = "GetEndDetailIntent";
-	private final static String INTENT_ALLCATEGORY = "AllCategoryIntent";
-	private final static String INTENT_SPORTSCATEGORY = "SportsCategoryIntent";
-	private final static String INTENT_ARTSANDENTERTAINMENTCATEGORY = "ArtsAndEntertainmentCategoryIntent";
-	private final static String INTENT_LECTURESCATEGORY = "LecturesCategoryIntent";
-	private final static String INTENT_CLUBSCATEGORY = "ClubsCategoryIntent";
+	private enum CalendarIntent {
+		NEXT_EVENT("NextEventIntent"),
+		GET_EVENTS_ON_DATE ("GetEventsOnDateIntent"),
+
+		GET_FEE_DETAIL("GetFeeDetailIntent"),
+		GET_LOCATION_DETAIL("GetLocationDetailIntent"),
+		GET_END_DETAIL("GetEndDetailIntent"),
+
+		ALL_CATEGORY("AllCategoryIntent"),
+		SPORTS_CATEGORY("SportsCategoryIntent"),
+		ARTS_AND_ENTERTAINMENT_CATEGORY("ArtsAndEntertainmentCategoryIntent"),
+		LECTURES_CATEGORY("LecturesCategoryIntent"),
+		CLUBS_CATEGORY("ClubsCategoryIntent");
+
+		private final String value;
+		private CalendarIntent(String value) { this.value = value; }
+		@Override public String toString() { return value; }
+
+		public static CalendarIntent valueOf(IntentRequest intentReq) {
+			// Intent requests are dispatched to us by name,
+			// so we always know the intent and name are non-null.
+			String intentName = intentReq.getIntent().getName();
+			return valueOf(intentName);
+		}
+	}
 
 	// Slot names (from the intent schema)
-	private final static String SLOT_EVENT_NAME = "eventName";
-	private final static String SLOT_AMAZON_DATE = "date";
+	private enum CalendarSlot {
+		EVENT_NAME("eventName"),
+		AMAZON_DATE("date");
+
+		private final String value;
+		private CalendarSlot(String value) { this.value = value; }
+		@Override public String toString() { return value; }
+
+		public static String getRequestSlotValue(IntentRequest intentReq, CalendarSlot slot) {
+			String slotName = slot.toString();
+			Slot intentSlot = intentReq.getIntent().getSlot(slotName);
+			if (intentSlot == null)
+				return null;
+			return intentSlot.getValue();
+		}
+	}
 
 	// Session attribute names
-	private final static String ATTRIB_STATEID = "stateId";
-	private final static String ATTRIB_SAVEDDATE = "savedDate";
-	private final static String ATTRIB_RECENTLYSAIDEVENTS = "recentlySaidEvents";
+	private enum CalendarAttrib {
+		STATE_ID("stateId"),
+		SAVED_DATE("savedDate"),
+		RECENTLY_SAID_EVENTS("recentlySaidEvents");
+
+		private final String value;
+		private CalendarAttrib(String value) { this.value = value; }
+		@Override public String toString() { return value; }
+
+		public static Object getSessionAttribute(Session session, CalendarAttrib attrib) {
+			String attribName = attrib.toString();
+			return session.getAttribute(attribName);
+		}
+
+		public static void setSessionAttribute(Session session, CalendarAttrib attrib, Object value) {
+			String attribName = attrib.toString();
+			session.setAttribute(attribName, value);
+		}
+
+		public static  void removeSessionAttribute(Session session, CalendarAttrib attrib) {
+			String attribName = attrib.toString();
+			session.removeAttribute(attribName);
+		}
+	}
+
+	// Session states
+	private enum SessionState {
+		USER_HEARD_EVENTS, // The user has heard a list of events and can now ask about specific ones.
+		LIST_TOO_LONG; // The list of events is too long, so the user must narrow it down somehow.
+
+		public static SessionState valueOf(Session session) {
+			String stateName = (String) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.STATE_ID);
+			if (stateName == null)
+				return null;
+			return valueOf(stateName);
+		}
+	}
 
 	// Other constants
 	private final static int MAX_EVENTS = 5;
 
 	private DbConnection db;
-
-	private enum SessionState {
-		USER_HEARD_EVENTS, // The user has heard a list of events and can now ask about specific ones.
-		LIST_TOO_LONG, // The list of events is too long, so the user must narrow it down somehow.
-	}
 
 
 	public CalendarConversation() {
@@ -66,37 +124,28 @@ public class CalendarConversation extends Conversation {
 		db.runQuery("SET timezone='" + CalendarHelper.TIME_ZONE + "'");
 
 		// Add custom intent names for dispatcher use.
-		supportedIntentNames.add(INTENT_NEXTEVENT);
-		supportedIntentNames.add(INTENT_GETEVENTSONDATE);
-		supportedIntentNames.add(INTENT_GETFEEDETAIL);
-		supportedIntentNames.add(INTENT_GETLOCATIONDETAIL);
-		supportedIntentNames.add(INTENT_GETENDDETAIL);
-		supportedIntentNames.add(INTENT_ALLCATEGORY);
-		supportedIntentNames.add(INTENT_SPORTSCATEGORY);
-		supportedIntentNames.add(INTENT_ARTSANDENTERTAINMENTCATEGORY);
-		supportedIntentNames.add(INTENT_LECTURESCATEGORY);
-		supportedIntentNames.add(INTENT_CLUBSCATEGORY);
+		for (CalendarIntent intent : CalendarIntent.values())
+			supportedIntentNames.add(intent.toString());
 	}
 
 
 	@Override
 	public SpeechletResponse respondToIntentRequest(IntentRequest intentReq, Session session) {
 		SpeechletResponse response;
-		// Intent requests are dispatched to us by name,
-		// so we always know the intent and name are non-null.
-		String intentName = intentReq.getIntent().getName();
 
-		switch (intentName) {
+		CalendarIntent intent = CalendarIntent.valueOf(intentReq);
+
+		switch (intent) {
 
 		/*
 		 * These intents are not sensitive to session state and can be invoked at any time.
 		 */
 
-		case INTENT_NEXTEVENT:
+		case NEXT_EVENT:
 			response = handleNextEventIntent(intentReq, session);
 			break;
 
-		case INTENT_GETEVENTSONDATE:
+		case GET_EVENTS_ON_DATE:
 			response = handleGetEventsOnDateIntent(intentReq, session);
 			break;
 
@@ -118,13 +167,11 @@ public class CalendarConversation extends Conversation {
 	 */
 	private SpeechletResponse handleStateSensitiveIntents(IntentRequest intentReq, Session session) {
 		SpeechletResponse response;
-		SessionState state;
-		String stateAttrib = (String) session.getAttribute(ATTRIB_STATEID);
 
-		if (stateAttrib == null)
+		SessionState state = SessionState.valueOf(session);
+		if (state == null)
 			return newBadStateResponse("handleStateSensitiveIntents");
 
-		state = SessionState.valueOf(stateAttrib);
 
 		switch (state) {
 		case USER_HEARD_EVENTS:
@@ -148,18 +195,19 @@ public class CalendarConversation extends Conversation {
 	 */
 	private SpeechletResponse handleDetailIntents(IntentRequest intentReq, Session session) {
 		SpeechletResponse response;
-		String intentName = intentReq.getIntent().getName();
 
-		switch (intentName) {
-		case INTENT_GETFEEDETAIL:
+		CalendarIntent intent = CalendarIntent.valueOf(intentReq);
+
+		switch (intent) {
+		case GET_FEE_DETAIL:
 			response = handleGetFeeDetailIntent(intentReq, session);
 			break;
 
-		case INTENT_GETLOCATIONDETAIL:
+		case GET_LOCATION_DETAIL:
 			response = handleGetLocationDetailIntent(intentReq, session);
 			break;
 
-		case INTENT_GETENDDETAIL:
+		case GET_END_DETAIL:
 			response = handleGetEndDetailIntent(intentReq, session);
 			break;
 
@@ -176,27 +224,28 @@ public class CalendarConversation extends Conversation {
 	 * Map narrow-down intents by category
 	 */
 	private SpeechletResponse handleNarrowDownIntents(IntentRequest intentReq, Session session) {
-		String intentName = intentReq.getIntent().getName();
 		String category;
 
-		switch (intentName) {
-		case INTENT_ALLCATEGORY:
+		CalendarIntent intent = CalendarIntent.valueOf(intentReq);
+
+		switch (intent) {
+		case ALL_CATEGORY:
 			category = "all";
 			break;
 
-		case INTENT_SPORTSCATEGORY:
+		case SPORTS_CATEGORY:
 			category = "Athletics";
 			break;
 
-		case INTENT_ARTSANDENTERTAINMENTCATEGORY:
+		case ARTS_AND_ENTERTAINMENT_CATEGORY:
 			category = "Arts and Entertainment";
 			break;
 
-		case INTENT_LECTURESCATEGORY:
+		case LECTURES_CATEGORY:
 			category = "Lectures and Films";
 			break;
 
-		case INTENT_CLUBSCATEGORY:
+		case CLUBS_CATEGORY:
 			category = "Club and Student Organizations";
 			break;
 
@@ -222,9 +271,9 @@ public class CalendarConversation extends Conversation {
 
 		Map<String, Integer> savedEvent = CalendarHelper.extractEventIds(results, 1);
 
-		session.setAttribute(ATTRIB_RECENTLYSAIDEVENTS, savedEvent);
-		session.setAttribute(ATTRIB_STATEID, SessionState.USER_HEARD_EVENTS);
-		session.removeAttribute(ATTRIB_SAVEDDATE);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvent);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
+		CalendarAttrib.removeSessionAttribute(session, CalendarAttrib.SAVED_DATE);
 
 		return newAffirmativeResponse(eventSsml, repromptSsml);
 	}
@@ -233,10 +282,8 @@ public class CalendarConversation extends Conversation {
 	private SpeechletResponse handleGetEventsOnDateIntent(IntentRequest intentReq, Session session) {
 		SpeechletResponse response;
 
-		Slot dateSlot = intentReq.getIntent().getSlot(SLOT_AMAZON_DATE);
-		String givenDate;
-
-		if (dateSlot == null || (givenDate = dateSlot.getValue()) == null)
+		String givenDate = CalendarSlot.getRequestSlotValue(intentReq, CalendarSlot.AMAZON_DATE);
+		if (givenDate == null)
 			return newBadSlotResponse("date");
 
 		DateRange dateRange = new DateRange(givenDate);
@@ -278,14 +325,14 @@ public class CalendarConversation extends Conversation {
 		if (numEvents <= MAX_EVENTS) {
 			Map<String, Integer> savedEvents = CalendarHelper.extractEventIds(results, numEvents);
 
-			session.setAttribute(ATTRIB_RECENTLYSAIDEVENTS, savedEvents);
-			session.setAttribute(ATTRIB_STATEID, SessionState.USER_HEARD_EVENTS);
+			CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
+			CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
 
 			String responsePrefix = "The events ";
 
 			response = newEventListResponse(results, dateRange, responsePrefix);
 		} else { // more than MAX_EVENTS
-			session.setAttribute(ATTRIB_STATEID, SessionState.LIST_TOO_LONG);
+			CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.LIST_TOO_LONG);
 
 			String dateSsml = dateRange.getDateSsml();
 			String responseSsml = "I was able to find " + numEvents + " different events " +
@@ -298,7 +345,7 @@ public class CalendarConversation extends Conversation {
 			response = newAffirmativeResponse(responseSsml, repromptSsml);
 		}
 
-		session.setAttribute(ATTRIB_SAVEDDATE, dateRange);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.SAVED_DATE, dateRange);
 
 		return response;
 	}
@@ -307,7 +354,7 @@ public class CalendarConversation extends Conversation {
 	private SpeechletResponse handleNarrowDownIntent(IntentRequest intentReq, Session session, String category) {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> dateRangeAttrib =
-			(Map<String, Object>) session.getAttribute(ATTRIB_SAVEDDATE);
+			(Map<String, Object>) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.SAVED_DATE);
 
 		// This should never happen.
 		if (dateRangeAttrib == null)
@@ -358,8 +405,8 @@ public class CalendarConversation extends Conversation {
 
 		Map<String, Integer> savedEvents = CalendarHelper.extractEventIds(results, numEvents);
 
-		session.setAttribute(ATTRIB_RECENTLYSAIDEVENTS, savedEvents);
-		session.setAttribute(ATTRIB_STATEID, SessionState.USER_HEARD_EVENTS);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
 
 		Timestamp start = (Timestamp) results.get("start").get(0);
 
@@ -374,21 +421,20 @@ public class CalendarConversation extends Conversation {
 	private SpeechletResponse handleGetFeeDetailIntent(IntentRequest intentReq, Session session) {
 		@SuppressWarnings("unchecked")
 		Map<String, Integer> savedEvents =
-			(HashMap<String, Integer>) session.getAttribute(ATTRIB_RECENTLYSAIDEVENTS);
-		final Set<String> savedEventNames = savedEvents.keySet();
-
+			(HashMap<String, Integer>) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS);
 		if (savedEvents == null)
 			return newBadStateResponse("handleGetFeeDetailIntent");
 
-		Slot eventSlot = intentReq.getIntent().getSlot(SLOT_EVENT_NAME);
+		Set<String> savedEventNames = savedEvents.keySet();
 		String eventNameSlotValue;
 
-		if (savedEvents.size() == 1) {
+		if (savedEvents.size() == 1)
 			eventNameSlotValue = (String) savedEventNames.toArray()[0];
-		} else if (eventSlot == null ||
-		           (eventNameSlotValue = eventSlot.getValue()) == null) {
+		else
+			eventNameSlotValue = CalendarSlot.getRequestSlotValue(intentReq, CalendarSlot.EVENT_NAME);
+
+		if (eventNameSlotValue == null)
 			return newBadSlotResponse("event");
-		}
 
 		String eventName = CosineSim.getBestMatch(eventNameSlotValue, savedEventNames);
 		Integer eventId = savedEvents.get(eventName);
@@ -423,21 +469,20 @@ public class CalendarConversation extends Conversation {
 	private SpeechletResponse handleGetLocationDetailIntent(IntentRequest intentReq, Session session) {
 		@SuppressWarnings("unchecked")
 		Map<String, Integer> savedEvents =
-			(HashMap<String, Integer>) session.getAttribute(ATTRIB_RECENTLYSAIDEVENTS);
-		final Set<String> savedEventNames = savedEvents.keySet();
-
+			(HashMap<String, Integer>) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS);
 		if (savedEvents == null)
 			return newBadStateResponse("handleGetLocationDetailIntent");
 
-		Slot eventSlot = intentReq.getIntent().getSlot(SLOT_EVENT_NAME);
+		Set<String> savedEventNames = savedEvents.keySet();
 		String eventNameSlotValue;
 
-		if (savedEvents.size() == 1) {
+		if (savedEvents.size() == 1)
 			eventNameSlotValue = (String) savedEventNames.toArray()[0];
-		} else if (eventSlot == null ||
-		           (eventNameSlotValue = eventSlot.getValue()) == null) {
+		else
+			eventNameSlotValue = CalendarSlot.getRequestSlotValue(intentReq, CalendarSlot.EVENT_NAME);
+
+		if (eventNameSlotValue == null)
 			return newBadSlotResponse("event");
-		}
 
 		String eventName = CosineSim.getBestMatch(eventNameSlotValue, savedEventNames);
 		Integer eventId = savedEvents.get(eventName);
@@ -472,21 +517,20 @@ public class CalendarConversation extends Conversation {
 	private SpeechletResponse handleGetEndDetailIntent(IntentRequest intentReq, Session session) {
 		@SuppressWarnings("unchecked")
 		Map<String, Integer> savedEvents =
-			(HashMap<String, Integer>) session.getAttribute(ATTRIB_RECENTLYSAIDEVENTS);
-		final Set<String> savedEventNames = savedEvents.keySet();
-
+			(HashMap<String, Integer>) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS);
 		if (savedEvents == null)
 			return newBadStateResponse("handleGetEndTimeIntent");
 
-		Slot eventSlot = intentReq.getIntent().getSlot(SLOT_EVENT_NAME);
+		Set<String> savedEventNames = savedEvents.keySet();
 		String eventNameSlotValue;
 
-		if (savedEvents.size() == 1) {
+		if (savedEvents.size() == 1)
 			eventNameSlotValue = (String) savedEventNames.toArray()[0];
-		} else if (eventSlot == null ||
-		           (eventNameSlotValue = eventSlot.getValue()) == null) {
+		else
+			eventNameSlotValue = CalendarSlot.getRequestSlotValue(intentReq, CalendarSlot.EVENT_NAME);
+
+		if (eventNameSlotValue == null)
 			return newBadSlotResponse("event");
-		}
 
 		String eventName = CosineSim.getBestMatch(eventNameSlotValue, savedEventNames);
 		Integer eventId = savedEvents.get(eventName);

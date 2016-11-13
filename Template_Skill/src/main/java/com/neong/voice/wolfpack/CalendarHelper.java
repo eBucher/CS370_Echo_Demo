@@ -101,16 +101,16 @@ public class CalendarHelper {
 		case "start:date":
 		case "end:date": {
 			final String fieldName = field.split(":")[0];
-			final Timestamp start = (Timestamp) events.get(fieldName).get(index);
-			result = formatDateSsml(start);
+			final Timestamp value = (Timestamp) events.get(fieldName).get(index);
+			result = formatDateSsml(value);
 			break;
 		}
 
 		case "start:time":
 		case "end:time": {
 			final String fieldName = field.split(":")[0];
-			final Timestamp end = (Timestamp) events.get(fieldName).get(index);
-			result = formatTimeSsml(end);
+			final Timestamp value = (Timestamp) events.get(fieldName).get(index);
+			result = formatTimeSsml(value);
 			break;
 		}
 

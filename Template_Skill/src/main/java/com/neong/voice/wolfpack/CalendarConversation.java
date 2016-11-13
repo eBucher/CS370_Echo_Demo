@@ -547,7 +547,7 @@ public class CalendarConversation extends Conversation {
 
 		try {
 			String query =
-				"SELECT title, 'end' FROM events " +
+				"SELECT title, \"end\" FROM events " +
 				"    WHERE event_id = ?";
 
 			PreparedStatement ps = db.prepareStatement(query);

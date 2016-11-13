@@ -83,10 +83,6 @@ public class AcademicCalendar extends Conversation {
 	public AcademicCalendar() {
 		super();
 
-		db = new DbConnection("DbCredentials.xml");
-		db.getRemoteConnection();
-		db.runQuery("SET timezone='" + CalendarHelper.TIME_ZONE + "'");
-
 		// Add custom intent names for dispatcher use.
 		for (AcademicIntent intent : AcademicIntent.values())
 			supportedIntentNames.add(intent.toString());
@@ -94,6 +90,11 @@ public class AcademicCalendar extends Conversation {
 
 	@Override
 	public SpeechletResponse respondToIntentRequest(IntentRequest intentReq, Session session) {
+		// Open up a connection to the database
+		db = new DbConnection("DbCredentials.xml");
+		db.getRemoteConnection();
+		db.runQuery("SET timezone='" + CalendarHelper.TIME_ZONE + "'");
+		
 		SpeechletResponse response;
 
 		AcademicIntent intent = AcademicIntent.valueOf(intentReq);

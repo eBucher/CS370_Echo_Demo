@@ -14,10 +14,13 @@ import com.amazon.speech.speechlet.Session;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.neong.voice.model.base.Conversation;
 import com.wolfpack.database.DbConnection;
+import com.neong.voice.wolfpack.DateRange;
 
 public class AcademicCalendarConversation extends Conversation {
 	// Intents
 	private enum AcademicIntent {
+		DAYS_UNTIL_ACADEMIC_EVENT("DaysUntilAcademicEventIntent"),
+		IS_THERE_CLASS("IsThereClassIntent"),
 		WHEN_IS_ACADEMIC_EVENT("WhenIsAcademicEventIntent");
 
 		private final String value;
@@ -42,7 +45,8 @@ public class AcademicCalendarConversation extends Conversation {
 
 	// Slots
 	private enum AcademicSlot {
-		ACADEMIC_EVENT("AcademicEvent");
+		ACADEMIC_EVENT("AcademicEvent"),
+		AMAZON_DATE("date");
 
 		private final String value;
 		private AcademicSlot(String value) { this.value = value; }
@@ -102,6 +106,14 @@ public class AcademicCalendarConversation extends Conversation {
 
 		switch (intent) {
 
+		case DAYS_UNTIL_ACADEMIC_EVENT:
+			response = handleDaysUntilIntent(intentReq, session);
+			break;
+
+		case IS_THERE_CLASS:
+			response = handleIsThereClassIntent(intentReq, session);
+			break;
+
 		case WHEN_IS_ACADEMIC_EVENT:
 			response = handleWhenIsIntent(intentReq, session);
 			break;
@@ -124,7 +136,7 @@ public class AcademicCalendarConversation extends Conversation {
 		Map<String, Vector<Object>> results;
 
 		try {
-			String query = "SELECT start, \"end\", description " +
+			String query = "SELECT title, start, \"end\", description " +
 				"FROM events " +
 				"WHERE title = ? AND \"end\" > now() " +
 				"ORDER BY start ASC " +
@@ -148,8 +160,77 @@ public class AcademicCalendarConversation extends Conversation {
 		String fmt = startDateSsml.equals(endDateSsml) ?
 			"{title} is on {start:date}. {description}" :
 			"{title} begins on {start:date} and ends on {end:date}. {description}";
-		String responseSsml = CalendarHelper.formatEventSsml(fmt, results);
+		String responseSsml = "<speak>" + CalendarHelper.formatEventSsml(fmt, results) + "</speak>";
 
-		return newTellResponse(responseSsml, false);
+		return newTellResponse(responseSsml, true);
+	}
+
+
+	private SpeechletResponse handleDaysUntilIntent(IntentRequest intentReq, Session session) {
+		String givenEvent = AcademicSlot.getRequestSlotValue(intentReq, AcademicSlot.ACADEMIC_EVENT);
+		if (givenEvent == null)
+			return CalendarConversation.newBadSlotResponse("academic event");
+
+		String eventName = Synonym.getSynonym(givenEvent, synonyms);
+
+		Map<String, Vector<Object>> results;
+
+		try {
+			String query = "SELECT days_until_event(?)";
+
+			PreparedStatement ps = db.prepareStatement(query);
+			ps.setString(1, eventName);
+
+			results = DbConnection.executeStatement(ps);
+		} catch (SQLException e) {
+			System.out.println(e);
+			return CalendarConversation.newInternalErrorResponse();
+		}
+
+		if (results.get("days_until_event").size() == 0)
+			return newTellResponse("I couldn't seem to find any information about " + eventName, false);
+
+		int numDays = (int) results.get("days_until_event").get(0);
+		System.out.println("NUM DAYS: " + numDays);
+
+		return newTellResponse("There are " + numDays + " days until " + eventName, false);
+	}
+
+
+	private SpeechletResponse handleIsThereClassIntent(IntentRequest intentReq, Session session) {
+		String givenDate = AcademicSlot.getRequestSlotValue(intentReq, AcademicSlot.AMAZON_DATE);
+		if (givenDate == null)
+			return CalendarConversation.newBadSlotResponse("date");
+
+		DateRange dateRange = new DateRange(givenDate);
+
+		Map<String, Vector<Object>> results;
+
+		try {
+			String query = "SELECT is_school_holiday(?);";
+
+			PreparedStatement ps = db.prepareStatement(query);
+			ps.setDate(1, dateRange.getBegin());
+
+			results = DbConnection.executeStatement(ps);
+		} catch (SQLException e) {
+			System.out.println(e);
+			return CalendarConversation.newInternalErrorResponse();
+		}
+
+		String response;
+
+		if (results.get("is_school_holiday").size() == 0) {
+			response = "I couldn't seem to find whether there is class on " +
+				dateRange.getDateSsml() + ".";
+
+		} else if (results.get("is_school_holiday").get(0).toString().equals('t')) {
+			response = "There will not be any classes on " + dateRange.getDateSsml() + ".";
+
+		} else {
+			response = "Classes will be in session on " + dateRange.getDateSsml() + ".";
+		}
+
+		return newTellResponse("<speak>" + response + "</speak>", true);
 	}
 }

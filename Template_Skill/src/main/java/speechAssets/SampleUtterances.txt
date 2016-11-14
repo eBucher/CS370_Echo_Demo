@@ -523,6 +523,16 @@ GetLocationDetailIntent Where will {eventName} be held at
 
 
 
+DaysUntilAcademicEventIntent how many days   until {AcademicEvent}
+DaysUntilAcademicEventIntent how many days are there until {AcademicEvent}
+
+DaysUntilAcademicEventIntent how long until {AcademicEvent}
+DaysUntilAcademicEventIntent the number of days until {AcademicEvent}
+
+IsThereClassIntent is there class on {date}
+
+IsThereClassIntent is there going to be class on {date}
+
 WhenIsAcademicEventIntent when is {AcademicEvent} over
 WhenIsAcademicEventIntent when is {AcademicEvent}  
 

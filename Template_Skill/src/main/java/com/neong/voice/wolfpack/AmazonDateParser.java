@@ -278,9 +278,6 @@ public class AmazonDateParser {
 		final int year = Integer.parseInt(pieces[0]);
 		int weekNum = Integer.parseInt(pieces[1]);
 
-		if (todayNumber() == SUNDAY)
-			weekNum++;
-
 		if (weekNum == thisWeekNumber()) {
 			return "this week";
 		}

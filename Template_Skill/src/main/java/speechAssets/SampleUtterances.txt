@@ -23,52 +23,76 @@ AMAZON.StopIntent stop
 
 
 
+GetEventsOnDateIntent what is   {date}
 GetEventsOnDateIntent what is on {date}
 GetEventsOnDateIntent what is for {date}
+GetEventsOnDateIntent what is happening   {date}
 GetEventsOnDateIntent what is happening on {date}
 GetEventsOnDateIntent what is happening for {date}
+GetEventsOnDateIntent what is going on   {date}
 GetEventsOnDateIntent what is going on on {date}
 GetEventsOnDateIntent what is going on for {date}
+GetEventsOnDateIntent what is coming up   {date}
 GetEventsOnDateIntent what is coming up on {date}
 GetEventsOnDateIntent what is coming up for {date}
+GetEventsOnDateIntent what is the haps   {date}
 GetEventsOnDateIntent what is the haps on {date}
 GetEventsOnDateIntent what is the haps for {date}
+GetEventsOnDateIntent what is occurring   {date}
 GetEventsOnDateIntent what is occurring on {date}
 GetEventsOnDateIntent what is occurring for {date}
+GetEventsOnDateIntent what is scheduled   {date}
 GetEventsOnDateIntent what is scheduled on {date}
 GetEventsOnDateIntent what is scheduled for {date}
+GetEventsOnDateIntent what is on the calendar   {date}
 GetEventsOnDateIntent what is on the calendar on {date}
 GetEventsOnDateIntent what is on the calendar for {date}
+GetEventsOnDateIntent what is cool   {date}
 GetEventsOnDateIntent what is cool on {date}
 GetEventsOnDateIntent what is cool for {date}
+GetEventsOnDateIntent what is ahead   {date}
 GetEventsOnDateIntent what is ahead on {date}
 GetEventsOnDateIntent what is ahead for {date}
+GetEventsOnDateIntent what is destined   {date}
 GetEventsOnDateIntent what is destined on {date}
 GetEventsOnDateIntent what is destined for {date}
+GetEventsOnDateIntent what is the future   {date}
 GetEventsOnDateIntent what is the future on {date}
 GetEventsOnDateIntent what is the future for {date}
+GetEventsOnDateIntent what's   {date}
 GetEventsOnDateIntent what's on {date}
 GetEventsOnDateIntent what's for {date}
+GetEventsOnDateIntent what's happening   {date}
 GetEventsOnDateIntent what's happening on {date}
 GetEventsOnDateIntent what's happening for {date}
+GetEventsOnDateIntent what's going on   {date}
 GetEventsOnDateIntent what's going on on {date}
 GetEventsOnDateIntent what's going on for {date}
+GetEventsOnDateIntent what's coming up   {date}
 GetEventsOnDateIntent what's coming up on {date}
 GetEventsOnDateIntent what's coming up for {date}
+GetEventsOnDateIntent what's the haps   {date}
 GetEventsOnDateIntent what's the haps on {date}
 GetEventsOnDateIntent what's the haps for {date}
+GetEventsOnDateIntent what's occurring   {date}
 GetEventsOnDateIntent what's occurring on {date}
 GetEventsOnDateIntent what's occurring for {date}
+GetEventsOnDateIntent what's scheduled   {date}
 GetEventsOnDateIntent what's scheduled on {date}
 GetEventsOnDateIntent what's scheduled for {date}
+GetEventsOnDateIntent what's on the calendar   {date}
 GetEventsOnDateIntent what's on the calendar on {date}
 GetEventsOnDateIntent what's on the calendar for {date}
+GetEventsOnDateIntent what's cool   {date}
 GetEventsOnDateIntent what's cool on {date}
 GetEventsOnDateIntent what's cool for {date}
+GetEventsOnDateIntent what's ahead   {date}
 GetEventsOnDateIntent what's ahead on {date}
 GetEventsOnDateIntent what's ahead for {date}
+GetEventsOnDateIntent what's destined   {date}
 GetEventsOnDateIntent what's destined on {date}
 GetEventsOnDateIntent what's destined for {date}
+GetEventsOnDateIntent what's the future   {date}
 GetEventsOnDateIntent what's the future on {date}
 GetEventsOnDateIntent what's the future for {date}
 

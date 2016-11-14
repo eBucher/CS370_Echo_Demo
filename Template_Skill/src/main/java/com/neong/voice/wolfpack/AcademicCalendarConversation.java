@@ -144,7 +144,7 @@ public class AcademicCalendarConversation extends Conversation {
 
 			PreparedStatement ps = db.prepareStatement(query);
 			ps.setString(1, eventName);
-			System.out.println(ps);
+
 			results = DbConnection.executeStatement(ps);
 		} catch (SQLException e) {
 			System.out.println(e);

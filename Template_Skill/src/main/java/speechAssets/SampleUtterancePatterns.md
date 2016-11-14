@@ -12,7 +12,7 @@ AMAZON.HelpIntent help ( |me)
 AMAZON.NoIntent (no|nope) ( |thank you|thanks)
 AMAZON.StopIntent (end|finish|quit|stop)
 
-GetEventsOnDateIntent (what is|what's) ( |happening|going on|coming up|the haps|occurring|scheduled|on the calendar|cool|ahead|destined|the future) ( |on|for) {date}
+GetEventsOnDateIntent (what is|what's) ( |happening|going on|coming up|scheduled|on the calendar|cool|ahead) ( |on|for) {date}
 NextEventIntent next (thing|event|show|meeting)
 NextEventIntent (thing|event|show|meeting) ( |happening) (soon|next)
 NextEventIntent (what is|what's) (the next event|coming up) ( |on the calendar)

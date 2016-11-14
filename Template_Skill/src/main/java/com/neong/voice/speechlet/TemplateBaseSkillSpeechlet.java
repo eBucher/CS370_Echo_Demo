@@ -107,50 +107,16 @@ public class TemplateBaseSkillSpeechlet implements Speechlet {
         log.info("onIntent requestId={}, sessionId={}", request.getRequestId(),
                 session.getSessionId());
 
-        SpeechletResponse response = null;
         Intent intent = request.getIntent();
         String intentName = (intent != null) ? intent.getName() : null;
 
         // Check for convo handling
         Conversation convo = getConvoForIntent(intentName);
 
-        // If the conversation matches a custom intent
-        if(convo != null) {
-            response = convo.respondToIntentRequest(request, session);
+        if (convo == null)
+            throw new SpeechletException("Invalid Intent");
 
-        // If the conversation matches a built in intent
-        } else {
-            switch (intentName) {
-            case "AMAZON.HelpIntent": {
-                String responseSsml = "Hmm, I'm sorry you are having trouble.";
-                String repromptSsml =
-                    "Try asking Sonoma State for what's happening tomorrow, " +
-                    "on a specific date, or next.";
-                response = Conversation.newAskResponse("<speak>" + responseSsml + "</speak>", true,
-                                                       "<speak>" + repromptSsml + "</speak>", true);
-                break;
-            }
-
-            case "AMAZON.StopIntent":
-            case "AMAZON.CancelIntent":
-                response = Conversation.newTellResponse("", false);
-                break;
-
-            case "AMAZON.NoIntent": {
-                String responseSsml = "Okay.";
-                String repromptSsml = "What did you want instead?";
-                response = Conversation.newAskResponse("<speak>" + responseSsml + "</speak>", true,
-                                                       "<speak>" + repromptSsml + "</speak>", true);
-                break;
-            }
-
-                // If the Intent cannot be handled
-            default:
-                throw new SpeechletException("Invalid Intent");
-            }
-        }
-
-        return response;
+        return convo.respondToIntentRequest(request, session);
     }
 
 

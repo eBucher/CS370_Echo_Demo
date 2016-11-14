@@ -160,9 +160,9 @@ public class AcademicCalendarConversation extends Conversation {
 		String fmt = startDateSsml.equals(endDateSsml) ?
 			"{title} is on {start:date}. {description}" :
 			"{title} begins on {start:date} and ends on {end:date}. {description}";
-		String responseSsml = CalendarHelper.formatEventSsml(fmt, results);
+		String responseSsml = "<speak>" + CalendarHelper.formatEventSsml(fmt, results) + "</speak>";
 
-		return newTellResponse(responseSsml, false);
+		return newTellResponse(responseSsml, true);
 	}
 	
 	

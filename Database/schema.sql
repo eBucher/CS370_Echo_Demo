@@ -157,28 +157,27 @@ ALTER FUNCTION given_category(text, date, date) OWNER TO ssuadmin;
 -- the number of days between now and the next upcoming one.
 -- If the event is currently in progress, the function will get get the
 -- next one.
-DROP FUNCTION days_until_event(text);
 CREATE FUNCTION days_until_event(event_name text)
-  RETURNS INTEGER AS $days_until_event$
-  
+  RETURNS INTEGER AS
+  $days_until_event$
   DECLARE
     event_date timestamp;
     days_until_event integer;
   BEGIN
     SELECT start INTO event_date
-    FROM events
-    WHERE title = event_name AND start > now()
-    ORDER BY start ASC
-    LIMIT 1;
+      FROM events
+      WHERE title = event_name AND start > now()
+      ORDER BY start ASC
+      LIMIT 1;
 
     SELECT event_date::date - now()::date
-    INTO days_until_event;
-    
-    RETURN days_until_event;
-    
-  END;
+      INTO days_until_event;
 
-  $days_until_event$ LANGUAGE plpgsql;
+    RETURN days_until_event;
+
+  END;
+  $days_until_event$
+  LANGUAGE plpgsql;
 ALTER FUNCTION days_until_event(text) OWNER TO ssuadmin;
 
 -- returns true if:
@@ -195,24 +194,24 @@ CREATE FUNCTION is_school_holiday(given_date date)
     day_of_week double precision;
   BEGIN
    SELECT count(*)
-   INTO num_events
-   FROM events
-   LEFT JOIN event_types
-   ON event_types.event_type_id = events.event_type_id
-   WHERE event_types.name = 'School Holiday' 
-   AND (start::date = given_date
-    OR (start::date <= given_date AND given_date <= "end"::date));
+     INTO num_events
+     FROM events
+     LEFT JOIN event_types
+       ON event_types.event_type_id = events.event_type_id
+     WHERE event_types.name = 'School Holiday'
+       AND (start::date = given_date
+            OR (start::date <= given_date AND given_date <= "end"::date));
 
-   IF (num_events > 0)
-    THEN return true;
+   IF (num_events > 0) THEN
+     RETURN true;
    END IF;
 
    day_of_week = date_part('dow', given_date);
-   IF(day_of_week = 0 OR day_of_week = 6)
-    THEN return true;
+   IF (day_of_week = 0 OR day_of_week = 6) THEN
+     RETURN true;
    END IF;
 
-   return false;
+   RETURN false;
 
   END;
   $$
@@ -299,5 +298,6 @@ GRANT USAGE,SELECT,UPDATE
   TO scraper;
 
 GRANT EXECUTE
-  ON FUNCTION given_category(text, date, date)
+  ON FUNCTION given_category(text, date, date), days_until_event(text),
+              is_school_holiday(date)
   TO alexaskill;

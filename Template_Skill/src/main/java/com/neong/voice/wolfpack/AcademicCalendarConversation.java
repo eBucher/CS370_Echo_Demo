@@ -19,9 +19,9 @@ import com.neong.voice.wolfpack.DateRange;
 public class AcademicCalendarConversation extends Conversation {
 	// Intents
 	private enum AcademicIntent {
-		WHEN_IS_ACADEMIC_EVENT("WhenIsAcademicEventIntent"),
 		DAYS_UNTIL_ACADEMIC_EVENT("DaysUntilAcademicEventIntent"),
-		IS_THERE_CLASS("IsThereClassIntent");
+		IS_THERE_CLASS("IsThereClassIntent"),
+		WHEN_IS_ACADEMIC_EVENT("WhenIsAcademicEventIntent");
 
 		private final String value;
 		private AcademicIntent(String value) { this.value = value; }
@@ -106,18 +106,18 @@ public class AcademicCalendarConversation extends Conversation {
 
 		switch (intent) {
 
-		case WHEN_IS_ACADEMIC_EVENT:
-			response = handleWhenIsIntent(intentReq, session);
-			break;
-			
 		case DAYS_UNTIL_ACADEMIC_EVENT:
 			response = handleDaysUntilIntent(intentReq, session);
 			break;
-			
+
 		case IS_THERE_CLASS:
 			response = handleIsThereClassIntent(intentReq, session);
 			break;
-			
+
+		case WHEN_IS_ACADEMIC_EVENT:
+			response = handleWhenIsIntent(intentReq, session);
+			break;
+
 		default:
 			response = handleWhenIsIntent(intentReq, session);
 			break;
@@ -164,8 +164,8 @@ public class AcademicCalendarConversation extends Conversation {
 
 		return newTellResponse(responseSsml, true);
 	}
-	
-	
+
+
 	private SpeechletResponse handleDaysUntilIntent(IntentRequest intentReq, Session session) {
 		String givenEvent = AcademicSlot.getRequestSlotValue(intentReq, AcademicSlot.ACADEMIC_EVENT);
 		if (givenEvent == null)
@@ -176,27 +176,27 @@ public class AcademicCalendarConversation extends Conversation {
 		Map<String, Vector<Object>> results;
 
 		try {
-			String query = "SELECT days_until_event(?);";
+			String query = "SELECT days_until_event(?)";
 
 			PreparedStatement ps = db.prepareStatement(query);
 			ps.setString(1, eventName);
-			System.out.println(ps);
+
 			results = DbConnection.executeStatement(ps);
 		} catch (SQLException e) {
 			System.out.println(e);
 			return CalendarConversation.newInternalErrorResponse();
 		}
-		
+
 		if (results.get("days_until_event").size() == 0)
 			return newTellResponse("I couldn't seem to find any information about " + eventName, false);
-		
+
 		int numDays = (int) results.get("days_until_event").get(0);
 		System.out.println("NUM DAYS: " + numDays);
-		
+
 		return newTellResponse("There are " + numDays + " days until " + eventName, false);
 	}
-	
-	
+
+
 	private SpeechletResponse handleIsThereClassIntent(IntentRequest intentReq, Session session) {
 		String givenDate = AcademicSlot.getRequestSlotValue(intentReq, AcademicSlot.AMAZON_DATE);
 		if (givenDate == null)
@@ -211,28 +211,26 @@ public class AcademicCalendarConversation extends Conversation {
 
 			PreparedStatement ps = db.prepareStatement(query);
 			ps.setDate(1, dateRange.getBegin());
+
 			results = DbConnection.executeStatement(ps);
 		} catch (SQLException e) {
 			System.out.println(e);
 			return CalendarConversation.newInternalErrorResponse();
 		}
-		
+
 		String response;
-		
-		if (results.get("is_school_holiday").size() == 0){
-			response = "<speak> I couldn't seem to find whether there is class on " +
-			dateRange.getDateSsml() + ". <speak>";
-			
+
+		if (results.get("is_school_holiday").size() == 0) {
+			response = "I couldn't seem to find whether there is class on " +
+				dateRange.getDateSsml() + ".";
+
 		} else if (results.get("is_school_holiday").get(0).toString().equals('t')) {
-			response = "There will not be any classes on " + dateRange.getDateSsml() + "."; 
-			
+			response = "There will not be any classes on " + dateRange.getDateSsml() + ".";
+
 		} else {
-			response = "Classes will be in session on " + dateRange.getDateSsml() + "."; 
+			response = "Classes will be in session on " + dateRange.getDateSsml() + ".";
 		}
-		
+
 		return newTellResponse("<speak>" + response + "</speak>", true);
 	}
-	
-	
-	
 }

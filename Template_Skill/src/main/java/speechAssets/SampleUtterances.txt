@@ -451,6 +451,23 @@ GetFeeDetailIntent How much does it cost to attend {eventName}
 GetFeeDetailIntent How much does it cost to see it
 GetFeeDetailIntent How much does it cost to see {eventName}
 
+GetLocationDetailIntent what building
+GetLocationDetailIntent what location
+GetLocationDetailIntent what's the building
+GetLocationDetailIntent what's the location
+
+GetLocationDetailIntent what building  
+GetLocationDetailIntent what building is {eventName}
+GetLocationDetailIntent what location  
+GetLocationDetailIntent what location is {eventName}
+
+GetLocationDetailIntent what's the building  
+GetLocationDetailIntent what's the building of {eventName}
+GetLocationDetailIntent what's the building for {eventName}
+GetLocationDetailIntent what's the location  
+GetLocationDetailIntent what's the location of {eventName}
+GetLocationDetailIntent what's the location for {eventName}
+
 GetLocationDetailIntent Where is it at
 GetLocationDetailIntent Where is it going to be
 GetLocationDetailIntent Where is it happening

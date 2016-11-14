@@ -28,6 +28,7 @@ import com.amazon.speech.speechlet.SpeechletException;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazon.speech.ui.PlainTextOutputSpeech;
 import com.amazon.speech.ui.Reprompt;
+import com.neong.voice.wolfpack.AcademicCalendarConversation;
 import com.neong.voice.wolfpack.CalendarConversation;
 import com.neong.voice.model.base.Conversation;
 
@@ -65,6 +66,7 @@ public class TemplateBaseSkillSpeechlet implements Speechlet {
 
         // TODO EDIT HERE: Add Conversation objects to registry
         supportedConversations.add(new CalendarConversation());
+        supportedConversations.add(new AcademicCalendarConversation());
 
 
         // Populate a map of supported intents to conversations for later dispatch

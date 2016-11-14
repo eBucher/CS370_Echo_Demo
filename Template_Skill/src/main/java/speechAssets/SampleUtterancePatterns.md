@@ -38,4 +38,7 @@ GetLocationDetailIntent what's the (building|location) ( |of {eventName}|for {ev
 GetLocationDetailIntent (Where is|Where's) (it|{eventName}) (at|going to be|happening|located|located at|going on|being held|being held at)
 GetLocationDetailIntent (Where's|where is) (it|{eventName})
 GetLocationDetailIntent Where will (it|{eventName}) be (at|happening|located|located at|going on|held|held at)
+
+WhenIsAcademicEventIntent when is {AcademicEvent} (over| )
+WhenIsAcademicEventIntent (what day does|when does) {AcademicEvent} (start|begin|end|finish)
 ```

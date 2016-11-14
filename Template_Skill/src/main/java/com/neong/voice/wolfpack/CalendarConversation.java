@@ -26,8 +26,13 @@ import java.util.Vector;
 
 
 public class CalendarConversation extends Conversation {
-	// Intent names
+	/** Intent names */
 	private enum CalendarIntent {
+		AMAZON_CANCEL("AMAZON.CancelIntent"),
+		AMAZON_HELP("AMAZON.HelpIntent"),
+		AMAZON_NO("AMAZON.NoIntent"),
+		AMAZON_STOP("AMAZON.StopIntent"),
+
 		NEXT_EVENT("NextEventIntent"),
 		GET_EVENTS_ON_DATE ("GetEventsOnDateIntent"),
 
@@ -61,7 +66,7 @@ public class CalendarConversation extends Conversation {
 		}
 	}
 
-	// Slot names (from the intent schema)
+	/** Slot names */
 	private enum CalendarSlot {
 		EVENT_NAME("eventName"),
 		AMAZON_DATE("date");
@@ -79,7 +84,7 @@ public class CalendarConversation extends Conversation {
 		}
 	}
 
-	// Session attribute names
+	/** Session attribute names */
 	private enum CalendarAttrib {
 		STATE_ID("stateId"),
 		SAVED_DATE("savedDate"),
@@ -105,7 +110,7 @@ public class CalendarConversation extends Conversation {
 		}
 	}
 
-	// Session states
+	/** Session states */
 	private enum SessionState {
 		USER_HEARD_EVENTS, // The user has heard a list of events and can now ask about specific ones.
 		LIST_TOO_LONG; // The list of events is too long, so the user must narrow it down somehow.
@@ -148,6 +153,19 @@ public class CalendarConversation extends Conversation {
 		/*
 		 * These intents are not sensitive to session state and can be invoked at any time.
 		 */
+
+		case AMAZON_CANCEL:
+		case AMAZON_STOP:
+			response = handleAmazonStopIntent(intentReq, session);
+			break;
+
+		case AMAZON_HELP:
+			response = handleAmazonHelpIntent(intentReq, session);
+			break;
+
+		case AMAZON_NO:
+			response = handleAmazonNoIntent(intentReq, session);
+			break;
 
 		case NEXT_EVENT:
 			response = handleNextEventIntent(intentReq, session);
@@ -228,41 +246,24 @@ public class CalendarConversation extends Conversation {
 	}
 
 
-	/**
-	 * Handle narrow-down intents by category
-	 */
-	private SpeechletResponse handleNarrowDownIntents(IntentRequest intentReq, Session session) {
-		String category;
+	private SpeechletResponse handleAmazonStopIntent(IntentRequest intentReq, Session session) {
+		return newTellResponse("", false);
+	}
 
-		CalendarIntent intent = CalendarIntent.valueOf(intentReq);
 
-		switch (intent) {
-		case ALL_CATEGORY:
-			category = "all";
-			break;
+	private SpeechletResponse handleAmazonHelpIntent(IntentRequest intentReq, Session session) {
+		String responseSsml = "Hmm, I'm sorry you are having trouble.";
+		String repromptSsml =
+			"Try asking Sonoma State for what's happening tomorrow, " +
+			"on a specific date, or next.";
+		return newAffirmativeResponse(responseSsml, repromptSsml);
+	}
 
-		case SPORTS_CATEGORY:
-			category = "Athletics";
-			break;
 
-		case ARTS_AND_ENTERTAINMENT_CATEGORY:
-			category = "Arts and Entertainment";
-			break;
-
-		case LECTURES_CATEGORY:
-			category = "Lectures and Films";
-			break;
-
-		case CLUBS_CATEGORY:
-			category = "Club and Student Organizations";
-			break;
-
-		default:
-			// TODO: Should inform the user what the categories are
-			return newTellResponse("Sorry, I'm not quite sure what you meant.", false);
-		}
-
-		return handleNarrowDownIntent(intentReq, session, category);
+	private SpeechletResponse handleAmazonNoIntent(IntentRequest intentReq, Session session) {
+		String responseSsml = "Okay.";
+		String repromptSsml = "What did you want instead?";
+		return newAffirmativeResponse(responseSsml, repromptSsml);
 	}
 
 
@@ -356,6 +357,41 @@ public class CalendarConversation extends Conversation {
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.SAVED_DATE, dateRange);
 
 		return response;
+	}
+
+
+	private SpeechletResponse handleNarrowDownIntents(IntentRequest intentReq, Session session) {
+		String category;
+
+		CalendarIntent intent = CalendarIntent.valueOf(intentReq);
+
+		switch (intent) {
+		case ALL_CATEGORY:
+			category = "all";
+			break;
+
+		case SPORTS_CATEGORY:
+			category = "Athletics";
+			break;
+
+		case ARTS_AND_ENTERTAINMENT_CATEGORY:
+			category = "Arts and Entertainment";
+			break;
+
+		case LECTURES_CATEGORY:
+			category = "Lectures and Films";
+			break;
+
+		case CLUBS_CATEGORY:
+			category = "Club and Student Organizations";
+			break;
+
+		default:
+			// TODO: Should inform the user what the categories are
+			return newTellResponse("Sorry, I'm not quite sure what you meant.", false);
+		}
+
+		return handleNarrowDownIntent(intentReq, session, category);
 	}
 
 
@@ -586,6 +622,7 @@ public class CalendarConversation extends Conversation {
 
 
 	/**
+	 * Generic response to list events for multiple days
 	 *
 	 * @param results   The results from a query. There must be start and title columns.
 	 * @param when      A dateRange built from results.

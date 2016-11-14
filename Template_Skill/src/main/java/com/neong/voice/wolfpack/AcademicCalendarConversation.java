@@ -18,7 +18,8 @@ import com.wolfpack.database.DbConnection;
 public class AcademicCalendarConversation extends Conversation {
 	// Intents
 	private enum AcademicIntent {
-		WHEN_IS_ACADEMIC_EVENT("WhenIsAcademicEventIntent");
+		WHEN_IS_ACADEMIC_EVENT("WhenIsAcademicEventIntent"),
+		DAYS_UNTIL_ACADEMIC_EVENT("DaysUntilAcademicEventIntent");
 
 		private final String value;
 		private AcademicIntent(String value) { this.value = value; }
@@ -105,7 +106,11 @@ public class AcademicCalendarConversation extends Conversation {
 		case WHEN_IS_ACADEMIC_EVENT:
 			response = handleWhenIsIntent(intentReq, session);
 			break;
-
+			
+		case DAYS_UNTIL_ACADEMIC_EVENT:
+			response = handleDaysUntilIntent(intentReq, session);
+			break;
+			
 		default:
 			response = handleWhenIsIntent(intentReq, session);
 			break;
@@ -124,7 +129,7 @@ public class AcademicCalendarConversation extends Conversation {
 		Map<String, Vector<Object>> results;
 
 		try {
-			String query = "SELECT start, \"end\", description " +
+			String query = "SELECT title, start, \"end\", description " +
 				"FROM events " +
 				"WHERE title = ? AND \"end\" > now() " +
 				"ORDER BY start ASC " +
@@ -132,7 +137,7 @@ public class AcademicCalendarConversation extends Conversation {
 
 			PreparedStatement ps = db.prepareStatement(query);
 			ps.setString(1, eventName);
-
+			System.out.println(ps);
 			results = DbConnection.executeStatement(ps);
 		} catch (SQLException e) {
 			System.out.println(e);
@@ -151,5 +156,36 @@ public class AcademicCalendarConversation extends Conversation {
 		String responseSsml = CalendarHelper.formatEventSsml(fmt, results);
 
 		return newTellResponse(responseSsml, false);
+	}
+	
+	
+	private SpeechletResponse handleDaysUntilIntent(IntentRequest intentReq, Session session) {
+		String givenEvent = AcademicSlot.getRequestSlotValue(intentReq, AcademicSlot.ACADEMIC_EVENT);
+		if (givenEvent == null)
+			return CalendarConversation.newBadSlotResponse("academic event");
+
+		String eventName = Synonym.getSynonym(givenEvent, synonyms);
+
+		Map<String, Vector<Object>> results;
+
+		try {
+			String query = "SELECT days_until_event(?);";
+
+			PreparedStatement ps = db.prepareStatement(query);
+			ps.setString(1, eventName);
+			System.out.println(ps);
+			results = DbConnection.executeStatement(ps);
+		} catch (SQLException e) {
+			System.out.println(e);
+			return CalendarConversation.newInternalErrorResponse();
+		}
+		
+		if (results.get("days_until_event").size() == 0)
+			return newTellResponse("I couldn't seem to find any information about " + eventName, false);
+		
+		int numDays = (int) results.get("days_until_event").get(0);
+		System.out.println("NUM DAYS: " + numDays);
+		
+		return newTellResponse("There are " + numDays + " days until " + eventName, false);
 	}
 }

@@ -152,6 +152,72 @@ CREATE FUNCTION given_category(category text, startDay date, endDay date)
   LANGUAGE plpgsql;
 ALTER FUNCTION given_category(text, date, date) OWNER TO ssuadmin;
 
+-- Returns the number of days between now and an event with the given event_name.
+-- If there are multiple days with the same name, the function will return
+-- the number of days between now and the next upcoming one.
+-- If the event is currently in progress, the function will get get the
+-- next one.
+CREATE FUNCTION days_until_event(event_name text)
+  RETURNS INTEGER AS
+  $days_until_event$
+  DECLARE
+    event_date timestamp;
+    days_until_event integer;
+  BEGIN
+    SELECT start INTO event_date
+      FROM events
+      WHERE title = event_name AND start > now()
+      ORDER BY start ASC
+      LIMIT 1;
+
+    SELECT event_date::date - now()::date
+      INTO days_until_event;
+
+    RETURN days_until_event;
+
+  END;
+  $days_until_event$
+  LANGUAGE plpgsql;
+ALTER FUNCTION days_until_event(text) OWNER TO ssuadmin;
+
+-- returns true if:
+--     The given_date is on a weekend
+--     The given_date is between the start and end of an event
+--     that is a 'School Holiday'
+-- Otherwise, the function will return false.
+CREATE FUNCTION is_school_holiday(given_date date)
+  RETURNS BOOLEAN AS
+  $$
+  DECLARE
+    is_school boolean;
+    num_events integer;
+    day_of_week double precision;
+  BEGIN
+   SELECT count(*)
+     INTO num_events
+     FROM events
+     LEFT JOIN event_types
+       ON event_types.event_type_id = events.event_type_id
+     WHERE event_types.name = 'School Holiday'
+       AND (start::date = given_date
+            OR (start::date <= given_date AND given_date <= "end"::date));
+
+   IF (num_events > 0) THEN
+     RETURN true;
+   END IF;
+
+   day_of_week = date_part('dow', given_date);
+   IF (day_of_week = 0 OR day_of_week = 6) THEN
+     RETURN true;
+   END IF;
+
+   RETURN false;
+
+  END;
+  $$
+  LANGUAGE plpgsql;
+ALTER FUNCTION is_school_holiday(date) OWNER TO ssuadmin;
+
 
 --
 -- Foreign key constraints
@@ -232,5 +298,6 @@ GRANT USAGE,SELECT,UPDATE
   TO scraper;
 
 GRANT EXECUTE
-  ON FUNCTION given_category(text, date, date)
+  ON FUNCTION given_category(text, date, date), days_until_event(text),
+              is_school_holiday(date)
   TO alexaskill;

@@ -39,6 +39,10 @@ GetLocationDetailIntent (Where is|Where's) (it|{eventName}) (at|going to be|happ
 GetLocationDetailIntent (Where's|where is) (it|{eventName})
 GetLocationDetailIntent Where will (it|{eventName}) be (at|happening|located|located at|going on|held|held at)
 
+DaysUntilAcademicEventIntent how many days ( |are there) until {AcademicEvent}
+DaysUntilAcademicEventIntent (how long|the number of days) until {AcademicEvent}
+IsThereClassIntent is there class on {date}
+IsThereClassIntent is there going to be class on {date}
 WhenIsAcademicEventIntent when is {AcademicEvent} (over| )
 WhenIsAcademicEventIntent (what day does|when does) {AcademicEvent} (start|begin|end|finish)
 ```

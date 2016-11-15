@@ -260,12 +260,12 @@ public class AcademicCalendarConversation extends Conversation {
 		}
 
 		String response;
-
+System.out.println(results.get("is_school_holiday").get(0).toString());
 		if (results.get("is_school_holiday").size() == 0) {
 			response = "I couldn't seem to find whether there is class on " +
 				dateRange.getDateSsml() + ".";
 
-		} else if (results.get("is_school_holiday").get(0).toString().equals('t')) {
+		} else if (results.get("is_school_holiday").get(0).toString().equals("true")) {
 			response = "There will not be any classes on " + dateRange.getDateSsml() + ".";
 
 		} else {

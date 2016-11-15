@@ -151,7 +151,7 @@ public class AcademicCalendarConversation extends Conversation {
 
 		try {
 			String responseJson = mapper.writeValueAsString(response);
-			ps = db.prepareStatement("INSERT INTO requests(content) VALUES (?::jsonb)");
+			ps = db.prepareStatement("INSERT INTO responses(content) VALUES (?::jsonb)");
 			ps.setString(1, responseJson);
 			ps.executeQuery();
 		} catch (JsonGenerationException e) {

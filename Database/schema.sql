@@ -146,12 +146,13 @@ CREATE FUNCTION given_category(category text, startDay date, endDay date)
         WHERE ei.start >= startDay AND ei.start < endDay;
     ELSE
       RETURN QUERY WITH cat(id) AS (
-        SELECT category_id FROM categories c WHERE name = c.category
+        SELECT category_id FROM categories c WHERE c.name = category
       ), ev(id) AS (
-        SELECT ec.event_id FROM event_categories ec WHERE ec.category_id = cat.id
+        SELECT ec.event_id FROM event_categories ec
+        JOIN cat ON cat.id = ec.category_id
       )
       SELECT ei.event_id, ei.title, ei.start, ei.location FROM event_info ei
-        NATURAL JOIN ev
+        JOIN ev on ev.id = ei.event_id
         WHERE ei.start >= startDay AND ei.start < endDay;
     END IF;
   END;

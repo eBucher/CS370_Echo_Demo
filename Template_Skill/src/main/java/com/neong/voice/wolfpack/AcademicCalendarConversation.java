@@ -79,6 +79,9 @@ public class AcademicCalendarConversation extends Conversation {
 		s.put("graduation",                    "Commencement");
 		s.put("columbus day",                  "Columbus Day");
 		s.put("presidents day",                "Presidents Day");
+		s.put("winter break",                  "Winter Break");
+		s.put("summer break",                  "Summer Break");
+		s.put("summer vacation",               "Summer Break");
 		synonyms = Collections.unmodifiableMap(s);
 	}
 

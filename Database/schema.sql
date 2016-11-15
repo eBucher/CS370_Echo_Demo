@@ -331,7 +331,7 @@ GRANT USAGE,SELECT,UPDATE
               event_types_event_type_id_seq
   TO scraper;
 
-GRANT USAGE,SELECT,INSERT
+GRANT SELECT,INSERT
   ON TABLE requests, sessions, responses
   TO alexaskill;
 

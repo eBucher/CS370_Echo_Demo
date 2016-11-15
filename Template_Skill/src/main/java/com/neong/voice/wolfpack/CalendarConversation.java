@@ -149,7 +149,7 @@ public class CalendarConversation extends Conversation {
 	@Override
 	public SpeechletResponse respondToIntentRequest(IntentRequest intentReq, Session session) {
 		SpeechletResponse response;
-
+		PreparedStatement ps;
 		ObjectMapper mapper = new ObjectMapper();
 
 		if (!db.getRemoteConnection())
@@ -157,72 +157,71 @@ public class CalendarConversation extends Conversation {
 		db.runQuery("SET timezone='" + CalendarHelper.TIME_ZONE + "'");
 
 		try {
-			PreparedStatement ps;
-
 			String requestJson = mapper.writeValueAsString(intentReq);
-			ps = db.prepareStatement("INSERT INTO requests(content) VALUES (?::json)");
+			ps = db.prepareStatement("INSERT INTO requests(content) VALUES (?::jsonb)");
 			ps.setString(1, requestJson);
-			DbConnection.executeStatement(ps);
-
-			String sessionJson = mapper.writeValueAsString(session);
-			ps = db.prepareStatement("INSERT INTO sessions(content) VALUES (?::json)");
-			ps.setString(1, sessionJson);
-			DbConnection.executeStatement(ps);
-
-			CalendarIntent intent = CalendarIntent.valueOf(intentReq);
-
-			switch (intent) {
-
-			/*
-			 * These intents are not sensitive to session state and can be invoked at any time.
-			 */
-
-			case AMAZON_CANCEL:
-			case AMAZON_STOP:
-				response = handleAmazonStopIntent(intentReq, session);
-				break;
-
-			case AMAZON_HELP:
-				response = handleAmazonHelpIntent(intentReq, session);
-				break;
-
-			case AMAZON_NO:
-				response = handleAmazonNoIntent(intentReq, session);
-				break;
-
-			case NEXT_EVENT:
-				response = handleNextEventIntent(intentReq, session);
-				break;
-
-			case GET_EVENTS_ON_DATE:
-				response = handleGetEventsOnDateIntent(intentReq, session);
-				break;
-
-			/*
-			 * The rest of the intents are sensitive to the current state of the session.
-			 */
-
-			default:
-				response = routeStateSensitiveIntents(intentReq, session);
-				break;
-			}
-
-			String responseJson = mapper.writeValueAsString(response);
-			ps = db.prepareStatement("INSERT INTO responses(content) VALUES (?::json)");
-			ps.setString(1, responseJson);
-			DbConnection.executeStatement(ps);
+			ps.executeQuery();
 		} catch (JsonGenerationException e) {
 			System.out.println(e);
-			response = Conversation.newTellResponse("oops", false);
 		} catch (JsonMappingException e) {
 			System.out.println(e);
-			response = Conversation.newTellResponse("whoops", false);
 		} catch (JsonProcessingException e) {
 			System.out.println(e);
-			response = Conversation.newTellResponse("oh dear", false);
 		} catch (SQLException e) {
 			System.out.println(e);
-			return newInternalErrorResponse();
+		}
+
+		CalendarIntent intent = CalendarIntent.valueOf(intentReq);
+
+		switch (intent) {
+
+		/*
+		 * These intents are not sensitive to session state and can be invoked at any time.
+		 */
+
+		case AMAZON_CANCEL:
+		case AMAZON_STOP:
+			response = handleAmazonStopIntent(intentReq, session);
+			break;
+
+		case AMAZON_HELP:
+			response = handleAmazonHelpIntent(intentReq, session);
+			break;
+
+		case AMAZON_NO:
+			response = handleAmazonNoIntent(intentReq, session);
+			break;
+
+		case NEXT_EVENT:
+			response = handleNextEventIntent(intentReq, session);
+			break;
+
+		case GET_EVENTS_ON_DATE:
+			response = handleGetEventsOnDateIntent(intentReq, session);
+			break;
+
+		/*
+		 * The rest of the intents are sensitive to the current state of the session.
+		 */
+
+		default:
+			response = routeStateSensitiveIntents(intentReq, session);
+			break;
+		}
+
+		try {
+			String responseJson = mapper.writeValueAsString(response);
+			ps = db.prepareStatement("INSERT INTO responses(content) VALUES (?::jsonb)");
+			ps.setString(1, responseJson);
+			ps.executeQuery();
+		} catch (JsonGenerationException e) {
+			System.out.println(e);
+		} catch (JsonMappingException e) {
+			System.out.println(e);
+		} catch (JsonProcessingException e) {
+			System.out.println(e);
+		} catch (SQLException e) {
+			System.out.println(e);
 		}
 
 		return response;

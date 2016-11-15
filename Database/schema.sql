@@ -141,14 +141,15 @@ CREATE FUNCTION given_category(category text, startDay date, endDay date)
   RETURNS TABLE (event_id smallint, title text, start timestamp with time zone, location text) AS
   $$
   BEGIN
-    RETURN QUERY SELECT e.event_id, e.title, e.start, c.name FROM events e
-      JOIN event_categories ec ON e.event_id = ec.event_id
-      JOIN categories c ON ec.category_id = c.category_id
-      WHERE c.name = category
-        AND e.start >= startDay AND e.start < endDay
-      ORDER BY e.start ASC;
-      
-      IF (category = 'all') THEN
+      IF (category <> 'all') THEN
+	RETURN QUERY SELECT e.event_id, e.title, e.start, c.name FROM events e
+      	  JOIN event_categories ec ON e.event_id = ec.event_id
+      	  JOIN categories c ON ec.category_id = c.category_id
+      	  WHERE c.name = category
+          AND e.start >= startDay AND e.start < endDay
+      	  ORDER BY e.start ASC;
+
+      ELSE IF (category = 'all') THEN
       	 RETURN QUERY SELECT e.event_id, e.title, e.start, c.name FROM events e
 	   JOIN event_categories ec ON e.event_id = ec.event_id
 	   JOIN categories c ON ec.category_id = c.category_id

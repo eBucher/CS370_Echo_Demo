@@ -82,9 +82,6 @@
       "intent": "NextEventIntent"
     },
     {
-      "intent": "AMAZON.YesIntent"
-    },
-    {
       "intent": "AMAZON.NoIntent"
     },
     {

@@ -553,7 +553,7 @@ public class CalendarConversation extends Conversation {
 		if (results.get("title").size() == 0)
 			return newInternalErrorResponse();
 
-		String eventFormat = "Alrighty, {title} is located at {location}.";
+		String eventFormat = "{title} is located at {location}.";
 
 		String eventSsml = CalendarHelper.formatEventSsml(eventFormat, results);
 

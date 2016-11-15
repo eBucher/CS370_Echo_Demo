@@ -458,7 +458,7 @@ public class CalendarConversation extends Conversation {
 		Timestamp start = (Timestamp) results.get("start").get(0);
 
 		// Format the first part of the response to indicate the category.
-		String categoryPrefix = "Cool. Here are the " + category + " events that I was able to find. ";
+		String categoryPrefix = CalendarHelper.randomAffirmative() + ". Here are the " + category + " events that I was able to find. ";
 
 
 		return dayByDayEventsResponse(results, dateRange, categoryPrefix);

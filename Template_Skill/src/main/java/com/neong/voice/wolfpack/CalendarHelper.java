@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Vector;
 
 import com.wolfpack.database.DbConnection;
@@ -263,5 +264,12 @@ public class CalendarHelper {
 		}
 
 		return savedEvents;
+	}
+	
+	public static String randomAffirmative(){
+		final String[] affirmatives = {"Okay", "Alright", "Got it", "Sure"};
+		Random random = new Random();
+		int index = random.nextInt(affirmatives.length);
+		return affirmatives[index];
 	}
 }

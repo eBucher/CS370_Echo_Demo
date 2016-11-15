@@ -126,7 +126,7 @@ ALTER TABLE categories OWNER TO ssuadmin;
 
 CREATE VIEW event_info AS
   SELECT e.event_id, e.title, e.start, l.name AS location FROM events e
-  JOIN locations l ON l.location_id = e.location_id
+  LEFT JOIN locations l USING (location_id)
   ORDER BY e.start ASC;
 ALTER VIEW event_info OWNER TO ssuadmin;
 
@@ -142,18 +142,17 @@ CREATE FUNCTION given_category(category text, startDay date, endDay date)
   $$
   BEGIN
     IF (category = 'all') THEN
-      RETURN QUERY SELECT e.event_id, e.title, e.start, c.name FROM events e
-        JOIN event_categories ec ON e.event_id = ec.event_id
-        JOIN categories c ON ec.category_id = c.category_id
-        WHERE e.start >= startDay AND e.start < endDay
-        ORDER BY e.start ASC;
+      RETURN QUERY SELECT ei.event_id, ei.title, ei.start, ei.location FROM event_info ei
+        WHERE ei.start >= startDay AND ei.start < endDay;
     ELSE
-      RETURN QUERY SELECT e.event_id, e.title, e.start, c.name FROM events e
-        JOIN event_categories ec ON e.event_id = ec.event_id
-        JOIN categories c ON ec.category_id = c.category_id
-        WHERE c.name = category
-          AND e.start >= startDay AND e.start < endDay
-        ORDER BY e.start ASC;
+      RETURN QUERY WITH cat(id) AS (
+        SELECT category_id FROM categories c WHERE name = c.category
+      ), ev(id) AS (
+        SELECT ec.event_id FROM event_categories ec WHERE ec.category_id = cat.id
+      )
+      SELECT ei.event_id, ei.title, ei.start, ei.location FROM event_info ei
+        NATURAL JOIN ev
+        WHERE ei.start >= startDay AND ei.start < endDay;
     END IF;
   END;
   $$

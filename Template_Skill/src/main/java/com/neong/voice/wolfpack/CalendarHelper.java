@@ -220,7 +220,7 @@ public class CalendarHelper {
 			eventDateSsml = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(i));
 			if (!eventDateSsml.equals(dateInProgressSsml)) {
 				dateInProgressSsml = eventDateSsml;
-				eventList += ". On " + dateInProgressSsml + " there is: ";
+				eventList += "<break strength=\"strong\"/> On " + dateInProgressSsml + " there is: ";
 			} else if (lastEventOnDay(events, i)) {
 					eventList += "and ";
 			}

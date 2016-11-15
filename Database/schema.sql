@@ -320,7 +320,7 @@ GRANT SELECT
               event_types_event_type_id_seq
   TO alexaskill;
 
-GRANT SELECT
+GRANT USAGE,SELECT,UPDATE
   ON SEQUENCE requests_request_id_seq, sessions_session_id_seq,
               responses_response_id_seq
   TO alexaskill;

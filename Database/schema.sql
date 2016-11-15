@@ -141,22 +141,21 @@ CREATE FUNCTION given_category(category text, startDay date, endDay date)
   RETURNS TABLE (event_id smallint, title text, start timestamp with time zone, location text) AS
   $$
   BEGIN
-      IF (category <> 'all') THEN
-	RETURN QUERY SELECT e.event_id, e.title, e.start, c.name FROM events e
-      	  JOIN event_categories ec ON e.event_id = ec.event_id
-      	  JOIN categories c ON ec.category_id = c.category_id
-      	  WHERE c.name = category
+    IF (category = 'all') THEN
+      RETURN QUERY SELECT e.event_id, e.title, e.start, c.name FROM events e
+        JOIN event_categories ec ON e.event_id = ec.event_id
+        JOIN categories c ON ec.category_id = c.category_id
+        WHERE e.start >= startDay AND e.start < endDay
+        ORDER BY e.start ASC;
+    ELSE
+      RETURN QUERY SELECT e.event_id, e.title, e.start, c.name FROM events e
+        JOIN event_categories ec ON e.event_id = ec.event_id
+        JOIN categories c ON ec.category_id = c.category_id
+        WHERE c.name = category
           AND e.start >= startDay AND e.start < endDay
-      	  ORDER BY e.start ASC;
-
-      ELSE IF (category = 'all') THEN
-      	 RETURN QUERY SELECT e.event_id, e.title, e.start, c.name FROM events e
-	   JOIN event_categories ec ON e.event_id = ec.event_id
-	   JOIN categories c ON ec.category_id = c.category_id
-	   WHERE e.start >= startDay AND e.start < endDay
-	   ORDER BY e.start ASC;
-      END IF;
-END;
+        ORDER BY e.start ASC;
+    END IF;
+  END;
   $$
   LANGUAGE plpgsql;
 ALTER FUNCTION given_category(text, date, date) OWNER TO ssuadmin;

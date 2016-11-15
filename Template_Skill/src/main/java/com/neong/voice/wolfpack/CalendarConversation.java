@@ -483,9 +483,8 @@ public class CalendarConversation extends Conversation {
 		if (numEvents == 0) {
 			// There will always be events for "all", or else we wouldn't be here.
 			String responseSsml = "I couldn't find any " + category + " events.";
-			String repromptSsml = "Can I help you find another event?";
 
-			return newFailureResponse(responseSsml, repromptSsml);
+			return newTellResponse(responseSsml, false);
 		}
 
 		Map<String, Integer> savedEvents = CalendarHelper.extractEventIds(results, numEvents);
@@ -496,7 +495,7 @@ public class CalendarConversation extends Conversation {
 		Timestamp start = (Timestamp) results.get("start").get(0);
 
 		// Format the first part of the response to indicate the category.
-		String categoryPrefix = "Cool. Here are the " + category + " events that I was able to find. ";
+		String categoryPrefix = CalendarHelper.randomAffirmative() + ". Here are the " + category + " events that I was able to find. ";
 
 
 		return dayByDayEventsResponse(results, dateRange, categoryPrefix);
@@ -591,7 +590,7 @@ public class CalendarConversation extends Conversation {
 		if (results.get("title").size() == 0)
 			return newInternalErrorResponse();
 
-		String eventFormat = "Alrighty, {title} is located at {location}.";
+		String eventFormat = "{title} is located at {location}.";
 
 		String eventSsml = CalendarHelper.formatEventSsml(eventFormat, results);
 

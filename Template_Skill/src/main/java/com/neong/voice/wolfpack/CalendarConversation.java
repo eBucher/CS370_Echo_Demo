@@ -444,8 +444,7 @@ public class CalendarConversation extends Conversation {
 		int numEvents = results.get("title").size();
 		if (numEvents == 0) {
 			// There will always be events for "all", or else we wouldn't be here.
-			String responseSsml = "<speak>I couldn't find any " + category + " events.";
-			String repromptSsml = "Can I help you find another event?</speak>";
+			String responseSsml = "I couldn't find any " + category + " events.";
 
 			return newTellResponse(responseSsml, false);
 		}

@@ -265,11 +265,13 @@ public class CalendarHelper {
 
 		return savedEvents;
 	}
-	
-	public static String randomAffirmative(){
-		final String[] affirmatives = {"Okay", "Alright", "Got it", "Sure"};
+
+
+	public static String randomAffirmative() {
+		final String[] affirmatives = { "Okay", "Alright", "Got it", "Sure" };
 		Random random = new Random();
 		int index = random.nextInt(affirmatives.length);
+
 		return affirmatives[index];
 	}
 }

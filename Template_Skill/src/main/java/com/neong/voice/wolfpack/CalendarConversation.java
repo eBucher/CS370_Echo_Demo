@@ -14,6 +14,12 @@ import com.neong.voice.model.base.Conversation;
 
 import com.wolfpack.database.DbConnection;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -144,46 +150,79 @@ public class CalendarConversation extends Conversation {
 	public SpeechletResponse respondToIntentRequest(IntentRequest intentReq, Session session) {
 		SpeechletResponse response;
 
+		ObjectMapper mapper = new ObjectMapper();
+
 		if (!db.getRemoteConnection())
 			return newInternalErrorResponse();
 		db.runQuery("SET timezone='" + CalendarHelper.TIME_ZONE + "'");
 
-		CalendarIntent intent = CalendarIntent.valueOf(intentReq);
+		try {
+			PreparedStatement ps;
 
-		switch (intent) {
+			String requestJson = mapper.writeValueAsString(intentReq);
+			ps = db.prepareStatement("INSERT INTO requests(content) VALUES (?::json)");
+			ps.setString(1, requestJson);
+			DbConnection.executeStatement(ps);
 
-		/*
-		 * These intents are not sensitive to session state and can be invoked at any time.
-		 */
+			String sessionJson = mapper.writeValueAsString(session);
+			ps = db.prepareStatement("INSERT INTO sessions(content) VALUES (?::json)");
+			ps.setString(1, sessionJson);
+			DbConnection.executeStatement(ps);
 
-		case AMAZON_CANCEL:
-		case AMAZON_STOP:
-			response = handleAmazonStopIntent(intentReq, session);
-			break;
+			CalendarIntent intent = CalendarIntent.valueOf(intentReq);
 
-		case AMAZON_HELP:
-			response = handleAmazonHelpIntent(intentReq, session);
-			break;
+			switch (intent) {
 
-		case AMAZON_NO:
-			response = handleAmazonNoIntent(intentReq, session);
-			break;
+			/*
+			 * These intents are not sensitive to session state and can be invoked at any time.
+			 */
 
-		case NEXT_EVENT:
-			response = handleNextEventIntent(intentReq, session);
-			break;
+			case AMAZON_CANCEL:
+			case AMAZON_STOP:
+				response = handleAmazonStopIntent(intentReq, session);
+				break;
 
-		case GET_EVENTS_ON_DATE:
-			response = handleGetEventsOnDateIntent(intentReq, session);
-			break;
+			case AMAZON_HELP:
+				response = handleAmazonHelpIntent(intentReq, session);
+				break;
 
-		/*
-		 * The rest of the intents are sensitive to the current state of the session.
-		 */
+			case AMAZON_NO:
+				response = handleAmazonNoIntent(intentReq, session);
+				break;
 
-		default:
-			response = routeStateSensitiveIntents(intentReq, session);
-			break;
+			case NEXT_EVENT:
+				response = handleNextEventIntent(intentReq, session);
+				break;
+
+			case GET_EVENTS_ON_DATE:
+				response = handleGetEventsOnDateIntent(intentReq, session);
+				break;
+
+			/*
+			 * The rest of the intents are sensitive to the current state of the session.
+			 */
+
+			default:
+				response = routeStateSensitiveIntents(intentReq, session);
+				break;
+			}
+
+			String responseJson = mapper.writeValueAsString(response);
+			ps = db.prepareStatement("INSERT INTO responses(content) VALUES (?::json)");
+			ps.setString(1, responseJson);
+			DbConnection.executeStatement(ps);
+		} catch (JsonGenerationException e) {
+			System.out.println(e);
+			response = Conversation.newTellResponse("oops", false);
+		} catch (JsonMappingException e) {
+			System.out.println(e);
+			response = Conversation.newTellResponse("whoops", false);
+		} catch (JsonProcessingException e) {
+			System.out.println(e);
+			response = Conversation.newTellResponse("oh dear", false);
+		} catch (SQLException e) {
+			System.out.println(e);
+			return newInternalErrorResponse();
 		}
 
 		return response;

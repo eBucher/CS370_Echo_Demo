@@ -16,6 +16,12 @@ import com.neong.voice.model.base.Conversation;
 import com.wolfpack.database.DbConnection;
 import com.neong.voice.wolfpack.DateRange;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 public class AcademicCalendarConversation extends Conversation {
 	// Intents
 	private enum AcademicIntent {
@@ -101,29 +107,62 @@ public class AcademicCalendarConversation extends Conversation {
 	public SpeechletResponse respondToIntentRequest(IntentRequest intentReq, Session session) {
 		SpeechletResponse response;
 
+		ObjectMapper mapper = new ObjectMapper();
+
 		if (!db.getRemoteConnection())
 			return CalendarConversation.newInternalErrorResponse();
 		db.runQuery("SET timezone='" + CalendarHelper.TIME_ZONE + "'");
 
-		AcademicIntent intent = AcademicIntent.valueOf(intentReq);
+		try {
+			PreparedStatement ps;
 
-		switch (intent) {
+			String requestJson = mapper.writeValueAsString(intentReq);
+			ps = db.prepareStatement("INSERT INTO requests(content) VALUES (?::json)");
+			ps.setString(1, requestJson);
+			DbConnection.executeStatement(ps);
 
-		case DAYS_UNTIL_ACADEMIC_EVENT:
-			response = handleDaysUntilIntent(intentReq, session);
-			break;
+			String sessionJson = mapper.writeValueAsString(session);
+			ps = db.prepareStatement("INSERT INTO sessions(content) VALUES (?::json)");
+			ps.setString(1, sessionJson);
+			DbConnection.executeStatement(ps);
 
-		case IS_THERE_CLASS:
-			response = handleIsThereClassIntent(intentReq, session);
-			break;
+			AcademicIntent intent = AcademicIntent.valueOf(intentReq);
 
-		case WHEN_IS_ACADEMIC_EVENT:
-			response = handleWhenIsIntent(intentReq, session);
-			break;
+			switch (intent) {
 
-		default:
-			response = handleWhenIsIntent(intentReq, session);
-			break;
+			case DAYS_UNTIL_ACADEMIC_EVENT:
+				response = handleDaysUntilIntent(intentReq, session);
+				break;
+
+			case IS_THERE_CLASS:
+				response = handleIsThereClassIntent(intentReq, session);
+				break;
+
+			case WHEN_IS_ACADEMIC_EVENT:
+				response = handleWhenIsIntent(intentReq, session);
+				break;
+
+			default:
+				response = handleWhenIsIntent(intentReq, session);
+				break;
+			}
+
+			String responseJson = mapper.writeValueAsString(response);
+			ps = db.prepareStatement("INSERT INTO requests(content) VALUES (?::json)");
+			ps.setString(1, requestJson);
+			DbConnection.executeStatement(ps);
+		} catch (JsonGenerationException e) {
+			System.out.println(e);
+			response = Conversation.newTellResponse("oops", false);
+		} catch (JsonMappingException e) {
+			System.out.println(e);
+			response = Conversation.newTellResponse("whoops", false);
+		} catch (JsonProcessingException e) {
+			System.out.println(e);
+			response = Conversation.newTellResponse("oh dear", false);
+		} catch (SQLException e) {
+			System.out.println(e);
+			return CalendarConversation.newInternalErrorResponse();
 		}
 
 		return response;

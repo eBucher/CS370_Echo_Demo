@@ -119,6 +119,27 @@ CREATE TABLE categories(
 );
 ALTER TABLE categories OWNER TO ssuadmin;
 
+CREATE TABLE requests(
+  request_id serial NOT NULL,
+  content jsonb NOT NULL,
+  CONSTRAINT request_id PRIMARY KEY (request_id)
+);
+ALTER TABLE requests OWNER TO ssuadmin;
+
+CREATE TABLE sessions(
+  session_id serial NOT NULL,
+  content jsonb NOT NULL,
+  CONSTRAINT session_id PRIMARY KEY (session_id)
+);
+ALTER TABLE sessions OWNER TO ssuadmin;
+
+CREATE TABLE responses(
+  response_id serial NOT NULL,
+  content jsonb NOT NULL,
+  CONSTRAINT response_id PRIMARY KEY (response_id)
+);
+ALTER TABLE responses OWNER TO ssuadmin;
+
 
 --
 -- Views
@@ -299,11 +320,20 @@ GRANT SELECT
               event_types_event_type_id_seq
   TO alexaskill;
 
+GRANT SELECT
+  ON SEQUENCE requests_request_id_seq, sessions_session_id_seq,
+              responses_response_id_seq
+  TO alexaskill;
+
 GRANT USAGE,SELECT,UPDATE
   ON SEQUENCE events_event_id_seq, contacts_contact_id_seq,
               categories_category_id_seq, locations_location_id_seq,
               event_types_event_type_id_seq
   TO scraper;
+
+GRANT USAGE,SELECT,INSERT
+  ON TABLE requests, sessions, responses
+  TO alexaskill;
 
 GRANT EXECUTE
   ON FUNCTION given_category(text, date, date), days_until_event(text),

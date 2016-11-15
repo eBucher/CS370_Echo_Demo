@@ -106,6 +106,8 @@ public class TemplateBaseSkillSpeechlet implements Speechlet {
     @Override
     public SpeechletResponse onIntent(final IntentRequest request, final Session session)
             throws SpeechletException {
+        SpeechletResponse response;
+
         log.info("onIntent requestId={}, sessionId={}", request.getRequestId(),
                 session.getSessionId());
 

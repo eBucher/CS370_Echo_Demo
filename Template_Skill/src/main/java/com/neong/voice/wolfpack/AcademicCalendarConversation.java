@@ -37,8 +37,6 @@ public class AcademicCalendarConversation extends Conversation {
 			// Intent requests are dispatched to us by name,
 			// so we always know the intent and name are non-null.
 			String intentName = intentReq.getIntent().getName();
-			if (intentName == null)
-				return null;
 
 			for (AcademicIntent intent : AcademicIntent.values()) {
 				if (intentName.equals(intent.value))
@@ -60,6 +58,7 @@ public class AcademicCalendarConversation extends Conversation {
 
 		public static String getRequestSlotValue(IntentRequest intentReq, AcademicSlot slot) {
 			String slotName = slot.toString();
+			// We always know the intent is non-null.
 			Slot intentSlot = intentReq.getIntent().getSlot(slotName);
 			if (intentSlot == null)
 				return null;

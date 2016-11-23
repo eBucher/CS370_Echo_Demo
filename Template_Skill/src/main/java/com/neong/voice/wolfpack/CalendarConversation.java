@@ -152,9 +152,8 @@ public class CalendarConversation extends Conversation {
 		PreparedStatement ps;
 		ObjectMapper mapper = new ObjectMapper();
 
-		if (!db.getRemoteConnection())
+		if (!db.getRemoteConnection(CalendarHelper.TIME_ZONE))
 			return newInternalErrorResponse();
-		db.runQuery("SET timezone='" + CalendarHelper.TIME_ZONE + "'");
 
 		try {
 			String requestJson = mapper.writeValueAsString(intentReq);

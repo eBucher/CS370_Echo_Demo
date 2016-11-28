@@ -57,7 +57,7 @@ run_test '{
             "slots": {
                 "date": {
                     "name": "date",
-                    "value": "2016-11-14"
+                    "value": "2016-12-14"
                 }
             }
         }
@@ -73,8 +73,8 @@ run_test '{
         },
         "attributes" : {
             "savedDate" : {
-                "end" : "2016-11-15",
-                "begin" : "2016-11-14"
+                "end" : "2016-12-15",
+                "begin" : "2016-12-14"
             },
             "stateId" : "LIST_TOO_LONG"
         },

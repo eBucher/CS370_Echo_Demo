@@ -12,7 +12,16 @@ import com.neong.voice.wolfpack.DateRange;
 
 import com.neong.voice.model.base.Conversation;
 
+import com.wolfpack.CalendarDataFormatter;
+import com.wolfpack.CalendarDataSource;
+
 import com.wolfpack.database.DbConnection;
+
+import com.wolfpack.event.Filter;
+import com.wolfpack.event.FilterChain;
+import com.wolfpack.event.CategoryFilter;
+import com.wolfpack.event.StartFilter;
+import com.wolfpack.event.TitleFilter;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,6 +38,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
+import scala.Option;
+
+import scala.collection.immutable.List;
 
 
 public class CalendarConversation extends Conversation {
@@ -329,19 +342,19 @@ public class CalendarConversation extends Conversation {
 
 
 	private SpeechletResponse handleNextEventIntent(IntentRequest intentReq, Session session) {
-		Map<String, Vector<Object>> results =
-			db.runQuery("SELECT * FROM event_info WHERE start > now() LIMIT 1;");
-
-		if (results == null)
+		Option<List<CalendarDataSource.Event>> resultsOpt = CalendarDataSource.getNextEvent();
+		if (resultsOpt.isEmpty())
 			return newInternalErrorResponse();
 
+		List<CalendarDataSource.Event> results = resultsOpt.get();
+
 		String eventFormat = "The next event is {title}, on {start:date} at {start:time}.";
-		String responseSsml = CalendarHelper.formatEventSsml(eventFormat, results);
+		String responseSsml = CalendarDataFormatter.formatEventSsml(eventFormat, results);
 		String repromptSsml = "Is there anything you would like to know about this event?";
 
-		Map<String, Integer> savedEvent = CalendarHelper.extractEventIds(results, 1);
+		scala.collection.Map<String, Integer> savedEvents = CalendarDataSource.extractEventIds(results);
 
-		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvent);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
 		CalendarAttrib.removeSessionAttribute(session, CalendarAttrib.SAVED_DATE);
 

@@ -1,12 +1,15 @@
-apply plugin: 'java'
+apply plugin: 'scala'
 
 group = "Template_Skill"
 version = '1.0'
 
-compileJava {
-    targetCompatibility = JavaVersion.VERSION_1_8
-    sourceCompatibility = JavaVersion.VERSION_1_8
-}
+sourceSets.main.scala.srcDir "src/main/java"
+sourceSets.main.java.srcDirs = []
+sourceSets.test.scala.srcDir "src/test/java"
+sourceSets.test.java.srcDirs = []
+
+targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 jar {
     manifest {
@@ -35,6 +38,21 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.3.2'
     compile 'com.fasterxml.jackson.core:jackson-core:2.3.2'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
+
+    compile 'org.scala-lang:scala-library:2.11.8'
+    compile 'org.scala-lang.modules:scala-xml_2.11:1.0.6'
+
+    compile 'com.typesafe.slick:slick_2.11:3.1.1'
+    compile 'com.typesafe.slick:slick-codegen_2.11:3.1.1'
+
+    compile 'com.github.tminglei:slick-pg_2.11:0.14.3'
+    compile 'com.github.tminglei:slick-pg_date2_2.11:0.14.3'
+
+    testCompile 'org.testng:testng:6.9.10'
+}
+
+test {
+    useTestNG()
 }
 
 task fatJar(type: Jar) {
@@ -45,6 +63,11 @@ task fatJar(type: Jar) {
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint" << "-Werror"
+}
+
+task classpath << {
+    description 'Print project classpath.'
+    println sourceSets.main.runtimeClasspath.asPath
 }
 
 build.dependsOn fatJar

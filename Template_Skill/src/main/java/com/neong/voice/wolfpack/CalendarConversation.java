@@ -352,7 +352,7 @@ public class CalendarConversation extends Conversation {
 		String responseSsml = CalendarDataFormatter.formatEventSsml(eventFormat, results);
 		String repromptSsml = "Is there anything you would like to know about this event?";
 
-		scala.collection.Map<String, Integer> savedEvents = CalendarDataSource.extractEventIds(results);
+		Map<String, Integer> savedEvents = CalendarDataSource.extractEventIds(results);
 
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);

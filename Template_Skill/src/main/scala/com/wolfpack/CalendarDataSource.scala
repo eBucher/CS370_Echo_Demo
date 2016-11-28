@@ -11,6 +11,8 @@ import scala.concurrent.duration._
 
 import scala.util.{Success, Failure}
 
+import java.util.{Map => JMap}
+
 import java.sql.Timestamp
 
 import MyPostgresDriver.api._
@@ -55,9 +57,9 @@ object CalendarDataSource {
     }
   }
 
-  def extractEventIds(events: List[Event]): Map[String, Integer] = {
+  def extractEventIds(events: List[Event]): JMap[String, Integer] = {
     events.foldLeft(Map.empty[String, Integer]) {
       case (acc, event) => acc.updated(event.title, event.eventId)
-    }
+    }.asJava
   }
 }

@@ -52,6 +52,9 @@ object CalendarDataFormatter {
     field match {
       case "start:date" => CalendarHelper.formatDateSsml(event.start)
       case "start:time" => CalendarHelper.formatTimeSsml(event.start)
+
+      case "title" => event.title
+
       case _ => "?"
     }
   }

@@ -1,5 +1,7 @@
 package com.wolfpack.event
 
+import java.sql.Date
+
 class FilterChain(filters: List[Filter]) {
   import FilterChain._
 
@@ -34,7 +36,8 @@ object FilterChain {
       } yield e
 
       case StartFilter(start, end) =>
-        query.filter(e => e.start >= start && e.start < end)
+        query.filter(e => e.start.asColumnOf[Date] >= start &&
+          e.start.asColumnOf[Date] < end)
 
       case TitleFilter(title) => query.filter(_.title === title)
     }

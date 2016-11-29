@@ -34,6 +34,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,7 @@ import java.util.Vector;
 
 import scala.Option;
 
+import scala.collection.JavaConversions;
 import scala.collection.immutable.List;
 
 
@@ -370,29 +372,23 @@ public class CalendarConversation extends Conversation {
 			return newBadSlotResponse("date");
 
 		DateRange dateRange = new DateRange(givenDate);
+		Filter startFilter = StartFilter.apply(dateRange.getBegin(),
+		                                       dateRange.getEnd());
+		java.util.List<Filter> filtsJList = Arrays.asList(startFilter);
+		List<Filter> filters =
+			JavaConversions.collectionAsScalaIterable(filtsJList).toList();
 
 		// Select all events on the same day as the givenDate.
-		Map<String, Vector<Object>> results;
-
-		try {
-			String query = "SELECT event_id, title, start, location FROM event_info " +
-				"WHERE start >= ?::date AND start < ?::date";
-
-			PreparedStatement ps = db.prepareStatement(query);
-			ps.setDate(1, dateRange.getBegin());
-			ps.setDate(2, dateRange.getEnd());
-
-			results = DbConnection.executeStatement(ps);
-		} catch (SQLException e) {
-			System.out.println(e);
-			return newInternalErrorResponse();
-		}
+		Option<List<CalendarDataSource.Event>> resultsOpt =
+			CalendarDataSource.getEventsWithFilters(filters);
 
 		// If Alexa couldn't connect to the database or run the query:
-		if (results == null)
+		if (resultsOpt.isEmpty())
 			return newInternalErrorResponse();
 
-		int numEvents = results.get("title").size();
+		List<CalendarDataSource.Event> results = resultsOpt.get();
+
+		int numEvents = results.size();
 
 		// If there were not any events on the given day:
 		if (numEvents == 0) {
@@ -404,7 +400,7 @@ public class CalendarConversation extends Conversation {
 		}
 
 		if (numEvents <= MAX_EVENTS) {
-			Map<String, Integer> savedEvents = CalendarHelper.extractEventIds(results, numEvents);
+			Map<String, Integer> savedEvents = CalendarDataSource.extractEventIds(results);
 
 			CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
 			CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
@@ -690,6 +686,21 @@ public class CalendarConversation extends Conversation {
 
 
 	/**
+	 * Generic response for a list of events on a given date (new)
+	 */
+	private static SpeechletResponse newEventListResponse(List<CalendarDataSource.Event> results,
+	                                                      DateRange when, String prefix) {
+		String dateSsml = when.getRelativeDate(true);
+		String eventFormat = "<s>{title} at {start:time}</s>";
+		String eventsSsml = CalendarDataFormatter.listEvents(eventFormat, results);
+		String responseSsml = prefix + dateSsml + " are: " + eventsSsml;
+		String repromptSsml = "Is there anything you would like to know about those events?";
+
+		return newAffirmativeResponse(responseSsml, repromptSsml);
+	}
+
+
+	/**
 	 * Generic response to list events for multiple days
 	 *
 	 * @param results   The results from a query. There must be start and title columns.
@@ -762,12 +773,14 @@ public class CalendarConversation extends Conversation {
 		                      "<speak>" + repromptSsml + "</speak>", true);
 	}
 
+
 	/**
 	 * Generic response for when we experience an internal error
 	 */
 	public static SpeechletResponse newInternalErrorResponse() {
 		return newTellResponse("Sorry, I'm on break", false);
 	}
+
 
 	/**
 	 * Generic response for when we don't know what's going on

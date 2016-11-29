@@ -46,7 +46,7 @@ object CalendarDataSource {
   def getEventsWithFilters(filters: List[Filter]): Option[List[Event]] = {
     val filterChain = new FilterChain(filters)
     val query = Events.sortBy(_.start.asc)
-    val filtered = filterChain.apply(query)
+    val filtered = filterChain(query)
     val results = filtered.map(e => (e.eventId, e.title, e.start)).result
     Await.ready(db.run(results), 5 seconds).value match {
       case Some(result) => result match {

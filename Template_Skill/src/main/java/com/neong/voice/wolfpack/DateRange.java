@@ -33,6 +33,11 @@ public class DateRange {
 	private final String _relativeDateWithPreposition;
 
 
+	private static Timestamp dateToTimestamp(Date date) {
+		return Timestamp.valueOf(date.toString() + " 12:00:00");
+	}
+
+
 	public DateRange(final String dateString) {
 		final ImmutablePair<Date, Date> range =
 			AmazonDateParser.parseAmazonDate(dateString);
@@ -74,12 +79,7 @@ public class DateRange {
 	}
 
 
-	public Timestamp getTimestamp() {
-		return Timestamp.valueOf(_begin.toString() + " 12:00:00");
-	}
-
-
 	public String getDateSsml() {
-		return CalendarHelper.formatDateSsml(getTimestamp());
+		return CalendarHelper.formatDateSsml(dateToTimestamp(_begin));
 	}
 }

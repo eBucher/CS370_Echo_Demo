@@ -63,14 +63,14 @@ object CalendarDataFormatter {
 
   def listEvents(format: String, events: List[Event]): String = {
     val eventsLength = events.size
-    val responseBuilder = new StringBuilder(eventsLength * format.length)
+    val eventsList = new StringBuilder(eventsLength * format.length)
 
     for (i <- 0 until eventsLength) {
       if (i == eventsLength - 1 && eventsLength != 1)
-        responseBuilder.append(" and ")
-      responseBuilder.append(formatEventSsml(format, events, i))
+        eventsList.append(" and ")
+      eventsList.append(formatEventSsml(format, events, i))
     }
 
-    responseBuilder.toString
+    eventsList.toString
   }
 }

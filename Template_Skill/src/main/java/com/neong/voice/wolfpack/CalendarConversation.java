@@ -42,7 +42,6 @@ import java.util.Vector;
 
 import scala.Option;
 
-import scala.collection.JavaConversions;
 import scala.collection.immutable.List;
 
 
@@ -374,9 +373,7 @@ public class CalendarConversation extends Conversation {
 		DateRange dateRange = new DateRange(givenDate);
 		Filter startFilter = StartFilter.apply(dateRange.getBegin(),
 		                                       dateRange.getEnd());
-		java.util.List<Filter> filtsJList = Arrays.asList(startFilter);
-		List<Filter> filters =
-			JavaConversions.collectionAsScalaIterable(filtsJList).toList();
+		java.util.List<Filter> filters = Arrays.asList(startFilter);
 
 		// Select all events on the same day as the givenDate.
 		Option<List<CalendarDataSource.Event>> resultsOpt =

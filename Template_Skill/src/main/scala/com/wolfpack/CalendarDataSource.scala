@@ -1,5 +1,6 @@
 package com.wolfpack
 
+import collection.JavaConversions._
 import collection.JavaConverters._
 import collection.mutable.HashMap
 
@@ -11,7 +12,7 @@ import scala.concurrent.duration._
 
 import scala.util.{Success, Failure}
 
-import java.util.{Map => JMap}
+import java.util.{List => JList, Map => JMap}
 
 import java.sql.Timestamp
 
@@ -43,8 +44,9 @@ object CalendarDataSource {
     }
   }
 
-  def getEventsWithFilters(filters: List[Filter]): Option[List[Event]] = {
-    val filterChain = new FilterChain(filters)
+  def getEventsWithFilters(filters: JList[Filter]): Option[List[Event]] = {
+    val filtersList = collectionAsScalaIterable(filters).toList
+    val filterChain = new FilterChain(filtersList)
     val query = Events.sortBy(_.start.asc)
     val filtered = filterChain(query)
     val results = filtered.map(e => (e.eventId, e.title, e.start)).result

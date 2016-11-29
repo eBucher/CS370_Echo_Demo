@@ -34,6 +34,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -106,7 +107,7 @@ public class CalendarConversation extends Conversation {
 	/** Session attribute names */
 	private enum CalendarAttrib {
 		STATE_ID("stateId"),
-		SAVED_DATE("savedDate"),
+		FILTER_LIST("filterList"),
 		RECENTLY_SAID_EVENTS("recentlySaidEvents");
 
 		private final String value;
@@ -357,7 +358,7 @@ public class CalendarConversation extends Conversation {
 
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
-		CalendarAttrib.removeSessionAttribute(session, CalendarAttrib.SAVED_DATE);
+		CalendarAttrib.removeSessionAttribute(session, CalendarAttrib.FILTER_LIST);
 
 		return newAffirmativeResponse(responseSsml, repromptSsml);
 	}
@@ -370,10 +371,16 @@ public class CalendarConversation extends Conversation {
 		if (givenDate == null)
 			return newBadSlotResponse("date");
 
+		@SuppressWarnings("unchecked")
+		java.util.List<Filter> filters =
+			(java.util.List<Filter>) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.FILTER_LIST);
+		if (filters == null)
+			filters = new ArrayList<Filter>();
+
 		DateRange dateRange = new DateRange(givenDate);
 		Filter startFilter = StartFilter.apply(dateRange.getBegin(),
 		                                       dateRange.getEnd());
-		java.util.List<Filter> filters = Arrays.asList(startFilter);
+		filters.add(startFilter);
 
 		// Select all events on the same day as the givenDate.
 		Option<List<CalendarDataSource.Event>> resultsOpt =
@@ -386,8 +393,6 @@ public class CalendarConversation extends Conversation {
 		List<CalendarDataSource.Event> results = resultsOpt.get();
 
 		int numEvents = results.size();
-
-		// If there were not any events on the given day:
 		if (numEvents == 0) {
 			String dateSsml = dateRange.getDateSsml();
 			String responseSsml = "I couldn't find any events " + dateRange.getRelativeDate(true) + ".";
@@ -419,7 +424,7 @@ public class CalendarConversation extends Conversation {
 			response = newAffirmativeResponse(responseSsml, repromptSsml);
 		}
 
-		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.SAVED_DATE, dateRange);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.FILTER_LIST, filters);
 
 		return response;
 	}
@@ -462,49 +467,26 @@ public class CalendarConversation extends Conversation {
 
 	private SpeechletResponse handleNarrowDownIntent(IntentRequest intentReq, Session session, String category) {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> dateRangeAttrib =
-			(Map<String, Object>) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.SAVED_DATE);
+		java.util.List<Filter> filters =
+			(java.util.List<Filter>) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.FILTER_LIST);
+		if (filters == null)
+			filters = new ArrayList<Filter>();
 
-		// This should never happen.
-		if (dateRangeAttrib == null)
-			return newBadStateResponse("handleNarrowDownIntent");
+		Filter categoryFilter = CategoryFilter.apply(category);
+		filters.add(categoryFilter);
 
-		DateRange dateRange = new DateRange(dateRangeAttrib);
+		Option<List<CalendarDataSource.Event>> resultsOpt =
+			CalendarDataSource.getEventsWithFilters(filters);
 
-		// Return the name and the time of all events within that category, or if
-		// the query finds that there are no events on the day, Alexa tells the user
-		// she has nothing to return.
-		Map<String, Vector<Object>> results;
-
-		try {
-			PreparedStatement ps;
-			int position = 1;
-
-			if (category == "all") {
-				String query =
-					"SELECT event_id, title, start, location FROM event_info " +
-					"    WHERE start >= ?::date AND start < ?::date";
-				ps = db.prepareStatement(query);
-			} else {
-				String query =
-					"SELECT event_id, title, start, location FROM given_category(?, ?::date, ?::date)";
-				ps = db.prepareStatement(query);
-				ps.setString(position++, category);
-			}
-
-			ps.setDate(position++, dateRange.getBegin());
-			ps.setDate(position, dateRange.getEnd());
-
-			results = DbConnection.executeStatement(ps);
-		} catch (SQLException e) {
-			System.out.println(e);
+		if (resultsOpt.isEmpty())
 			return newInternalErrorResponse();
-		}
+
+		List<CalendarDataSource.Event> results = resultsOpt.get();
 
 		if (category.equals("all"))
 			category = "";
 
-		int numEvents = results.get("title").size();
+		int numEvents = results.size();
 		if (numEvents == 0) {
 			// There will always be events for "all", or else we wouldn't be here.
 			String responseSsml = "I couldn't find any " + category + " events.";
@@ -512,10 +494,11 @@ public class CalendarConversation extends Conversation {
 			return newTellResponse(responseSsml, false);
 		}
 
-		Map<String, Integer> savedEvents = CalendarHelper.extractEventIds(results, numEvents);
+		Map<String, Integer> savedEvents = CalendarDataSource.extractEventIds(results);
 
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.FILTER_LIST, filters);
 
 		// Format the first part of the response to indicate the category.
 		String categoryPrefix = CalendarHelper.randomAffirmative() + ". Here are the " + category + " events that I was able to find. ";
@@ -691,10 +674,10 @@ public class CalendarConversation extends Conversation {
 	 * @return          A string with a message such as "<prefix.> On <day> is <event>
 	 *                  at <time>, <event2> at <time2>... On <day2> there is...etc.
 	 */
-	private static SpeechletResponse dayByDayEventsResponse(Map<String, Vector<Object>> results,
+	private static SpeechletResponse dayByDayEventsResponse(List<CalendarDataSource.Event> events,
 	                                                        String prefix) {
 		String eventFormat = "<s>{title} at {start:time}</s>";
-		String responseSsml = prefix + CalendarHelper.listEventsWithDays(eventFormat, results);
+		String responseSsml = prefix + CalendarDataFormatter.listEventsWithDays(eventFormat, events);
 		String repromptSsml = "Is there anything you would like to know about those events?";
 
 		return newAffirmativeResponse(responseSsml, repromptSsml);

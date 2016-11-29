@@ -9,7 +9,7 @@ import java.sql.Timestamp
 object CalendarDataFormatter {
   import CalendarDataSource.Event
 
-  def formatEventSsml(format: String, events: List[Event], index: Int): String = {
+  def formatEventSsml(format: String, event: Event): String = {
     val len = format.length
     val resultBuilder = new StringBuilder(len)
     var i = 0
@@ -31,7 +31,6 @@ object CalendarDataFormatter {
         } while (c1 != '}')
 
         val field = fieldBuilder.toString
-        val event = events(index)
         val value = formatEventFieldSsml(field, event)
 
         resultBuilder.append(value)
@@ -45,8 +44,11 @@ object CalendarDataFormatter {
     CalendarHelper.replaceUnspeakables(result)
   }
 
+  def formatEventSsml(format: String, events: List[Event], index: Integer): String =
+    formatEventSsml(format, events(index))
+
   def formatEventSsml(format: String, events: List[Event]): String =
-    formatEventSsml(format, events, 0)
+    formatEventSsml(format, events(0))
 
   def formatEventFieldSsml(field: String, event: Event): String = {
     field match {

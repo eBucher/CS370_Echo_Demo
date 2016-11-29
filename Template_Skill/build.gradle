@@ -61,7 +61,7 @@ task fatJar(type: Jar) {
     with jar
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(ScalaCompile) {
     options.compilerArgs << "-Xlint" << "-Werror"
 }
 

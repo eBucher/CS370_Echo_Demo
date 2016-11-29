@@ -490,13 +490,10 @@ public class CalendarConversation extends Conversation {
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
 
-		Timestamp start = (Timestamp) results.get("start").get(0);
-
 		// Format the first part of the response to indicate the category.
 		String categoryPrefix = CalendarHelper.randomAffirmative() + ". Here are the " + category + " events that I was able to find. ";
 
-
-		return dayByDayEventsResponse(results, dateRange, categoryPrefix);
+		return dayByDayEventsResponse(results, categoryPrefix);
 	}
 
 
@@ -662,14 +659,13 @@ public class CalendarConversation extends Conversation {
 	 * Generic response to list events for multiple days
 	 *
 	 * @param results   The results from a query. There must be start and title columns.
-	 * @param when      A dateRange built from results.
 	 * @param prefix    An introductory sentence. Example - "Okay, here is what I found."
 	 *                  Pass an empty string if there should not be a prefix.
 	 * @return          A string with a message such as "<prefix.> On <day> is <event>
 	 *                  at <time>, <event2> at <time2>... On <day2> there is...etc.
 	 */
 	private static SpeechletResponse dayByDayEventsResponse(Map<String, Vector<Object>> results,
-	                                                        DateRange when, String prefix) {
+	                                                        String prefix) {
 		String eventFormat = "<s>{title} at {start:time}</s>";
 		String responseSsml = prefix + CalendarHelper.listEventsWithDays(eventFormat, results);
 		String repromptSsml = "Is there anything you would like to know about those events?";

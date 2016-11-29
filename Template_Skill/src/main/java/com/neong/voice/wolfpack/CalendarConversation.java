@@ -670,21 +670,6 @@ public class CalendarConversation extends Conversation {
 	/**
 	 * Generic response for a list of events on a given date
 	 */
-	private static SpeechletResponse newEventListResponse(Map<String, Vector<Object>> results,
-	                                                      DateRange when, String prefix) {
-		String dateSsml = when.getRelativeDate(true);
-		String eventFormat = "<s>{title} at {start:time}</s>";
-		String eventsSsml = CalendarHelper.listEvents(eventFormat, results);
-		String responseSsml = prefix + dateSsml + " are: " + eventsSsml;
-		String repromptSsml = "Is there anything you would like to know about those events?";
-
-		return newAffirmativeResponse(responseSsml, repromptSsml);
-	}
-
-
-	/**
-	 * Generic response for a list of events on a given date (new)
-	 */
 	private static SpeechletResponse newEventListResponse(List<CalendarDataSource.Event> results,
 	                                                      DateRange when, String prefix) {
 		String dateSsml = when.getRelativeDate(true);

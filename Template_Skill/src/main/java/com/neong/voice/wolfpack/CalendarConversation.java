@@ -407,9 +407,9 @@ public class CalendarConversation extends Conversation {
 			CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
 			CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
 
-			String responsePrefix = "The events ";
+			String responsePrefix = CalendarHelper.randomAffirmative() + ". Here are the events that I was able to find.";
 
-			response = newEventListResponse(results, dateRange, responsePrefix);
+			response = newEventListResponse(results, responsePrefix);
 		} else { // more than MAX_EVENTS
 			CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.LIST_TOO_LONG);
 
@@ -501,9 +501,9 @@ public class CalendarConversation extends Conversation {
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.FILTER_LIST, filters);
 
 		// Format the first part of the response to indicate the category.
-		String categoryPrefix = CalendarHelper.randomAffirmative() + ". Here are the " + category + " events that I was able to find. ";
+		String categoryPrefix = CalendarHelper.randomAffirmative() + ". Here are the " + category + " events that I was able to find.";
 
-		return dayByDayEventsResponse(results, categoryPrefix);
+		return newEventListResponse(results, categoryPrefix);
 	}
 
 
@@ -651,22 +651,7 @@ public class CalendarConversation extends Conversation {
 
 
 	/**
-	 * Generic response for a list of events on a given date
-	 */
-	private static SpeechletResponse newEventListResponse(List<CalendarDataSource.Event> results,
-	                                                      DateRange when, String prefix) {
-		String dateSsml = when.getRelativeDate(true);
-		String eventFormat = "<s>{title} at {start:time}</s>";
-		String eventsSsml = CalendarDataFormatter.listEvents(eventFormat, results);
-		String responseSsml = prefix + dateSsml + " are: " + eventsSsml;
-		String repromptSsml = "Is there anything you would like to know about those events?";
-
-		return newAffirmativeResponse(responseSsml, repromptSsml);
-	}
-
-
-	/**
-	 * Generic response to list events for multiple days
+	 * Generic response to list events for one or more days
 	 *
 	 * @param results   The results from a query. There must be start and title columns.
 	 * @param prefix    An introductory sentence. Example - "Okay, here is what I found."
@@ -674,8 +659,8 @@ public class CalendarConversation extends Conversation {
 	 * @return          A string with a message such as "<prefix.> On <day> is <event>
 	 *                  at <time>, <event2> at <time2>... On <day2> there is...etc.
 	 */
-	private static SpeechletResponse dayByDayEventsResponse(List<CalendarDataSource.Event> events,
-	                                                        String prefix) {
+	private static SpeechletResponse newEventListResponse(List<CalendarDataSource.Event> events,
+	                                                      String prefix) {
 		String eventFormat = "<s>{title} at {start:time}</s>";
 		String responseSsml = prefix + CalendarDataFormatter.listEventsWithDays(eventFormat, events);
 		String repromptSsml = "Is there anything you would like to know about those events?";

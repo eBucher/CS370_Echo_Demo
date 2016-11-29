@@ -197,41 +197,6 @@ public class CalendarHelper {
 	}
 
 
-	public static String listEvents(final String format, final Map<String, Vector<Object>> events) {
-		final int eventsLength = events.get("title").size();
-		final StringBuilder responseBuilder = new StringBuilder(eventsLength * format.length());
-
-		for (int i = 0; i < eventsLength; i++){
-			if (i == eventsLength - 1 && eventsLength != 1)
-				responseBuilder.append(" and ");
-			responseBuilder.append(formatEventSsml(format, events, i));
-		}
-		return responseBuilder.toString();
-	}
-
-
-	public static String listEventsWithDays(final String format, final Map<String, Vector<Object>> events) {
-		String dateInProgressSsml = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(0));
-		String eventDateSsml;
-		String eventList = "On " + dateInProgressSsml + " there is: ";
-		String nextDate;
-
-		for (int i = 0; i < events.get("start").size(); i++) {
-			eventDateSsml = CalendarHelper.formatDateSsml((Timestamp) events.get("start").get(i));
-			if (!eventDateSsml.equals(dateInProgressSsml)) {
-				dateInProgressSsml = eventDateSsml;
-				eventList += "<break strength=\"strong\"/> On " + dateInProgressSsml + " there is: ";
-			} else if (lastEventOnDay(events, i)) {
-					eventList += "and ";
-			}
-
-			eventList += CalendarHelper.formatEventSsml(format, events, i);
-		}
-
-		return eventList;
-	}
-
-
 	/**
 	 * Preconditions:   0 <= index <= the number of events represented in the map - 1
 	 *

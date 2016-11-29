@@ -63,23 +63,10 @@ object CalendarDataFormatter {
     }
   }
 
-  def listEvents(format: String, events: List[Event]): String = {
-    val eventsLength = events.size
-    val eventsList = new StringBuilder(eventsLength * format.length)
-
-    for (i <- 0 until eventsLength) {
-      if (i == eventsLength - 1 && eventsLength != 1)
-        eventsList.append(" and ")
-      eventsList.append(formatEventSsml(format, events, i))
-    }
-
-    eventsList.toString
-  }
-
   def listEventsWithDays(format: String, events: List[Event]): String = {
     val eventsLength = events.size
     val eventsList = new StringBuilder(eventsLength * format.length)
-    eventsList.append(s"On ${CalendarHelper.formatDateSsml(events(0).start)} there is: ")
+    eventsList.append(s" On ${CalendarHelper.formatDateSsml(events(0).start)} there is: ")
 
     var currentDay = events(0).start.toLocalDateTime.get(ChronoField.EPOCH_DAY)
 

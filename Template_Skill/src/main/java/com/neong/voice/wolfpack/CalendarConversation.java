@@ -313,7 +313,7 @@ public class CalendarConversation extends Conversation {
 			return newInternalErrorResponse();
 
 		String eventFormat = "The next event is {title}, on {start:date} at {start:time}.";
-		String eventSsml = CalendarHelper.formatEventSsml(eventFormat, results);
+		String responseSsml = CalendarHelper.formatEventSsml(eventFormat, results);
 		String repromptSsml = "Is there anything you would like to know about this event?";
 
 		Map<String, Integer> savedEvent = CalendarHelper.extractEventIds(results, 1);
@@ -322,7 +322,7 @@ public class CalendarConversation extends Conversation {
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
 		CalendarAttrib.removeSessionAttribute(session, CalendarAttrib.SAVED_DATE);
 
-		return newAffirmativeResponse(eventSsml, repromptSsml);
+		return newAffirmativeResponse(responseSsml, repromptSsml);
 	}
 
 

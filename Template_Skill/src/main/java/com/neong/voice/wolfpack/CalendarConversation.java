@@ -131,13 +131,17 @@ public class CalendarConversation extends Conversation {
 	// Other constants
 	private final static int MAX_EVENTS = 5;
 
+
+	// Private fields
 	private DbConnection db;
+	private ObjectMapper mapper;
 
 
 	public CalendarConversation() {
 		super();
 
 		db = new DbConnection("DbCredentials.xml");
+		mapper = new ObjectMapper();
 
 		// Add custom intent names for dispatcher use.
 		for (CalendarIntent intent : CalendarIntent.values())
@@ -145,20 +149,16 @@ public class CalendarConversation extends Conversation {
 	}
 
 
-	@Override
-	public SpeechletResponse respondToIntentRequest(IntentRequest intentReq, Session session) {
-		SpeechletResponse response;
-		PreparedStatement ps;
-		ObjectMapper mapper = new ObjectMapper();
-
-		if (!db.getRemoteConnection(CalendarHelper.TIME_ZONE))
-			return newInternalErrorResponse();
-
+	/**
+	 * Try to log the intent request to the database, but fail soft.
+	 */
+	private void logIntentRequest(IntentRequest req) {
 		try {
-			String requestJson = mapper.writeValueAsString(intentReq);
-			ps = db.prepareStatement("INSERT INTO requests(content) VALUES (?::jsonb)");
+			String requestJson = mapper.writeValueAsString(req);
+			PreparedStatement ps =
+				db.prepareStatement("INSERT INTO requests(content) VALUES (?::jsonb)");
 			ps.setString(1, requestJson);
-			ps.executeQuery();
+			ps.execute();
 		} catch (JsonGenerationException e) {
 			System.out.println(e);
 		} catch (JsonMappingException e) {
@@ -168,6 +168,42 @@ public class CalendarConversation extends Conversation {
 		} catch (SQLException e) {
 			System.out.println(e);
 		}
+	}
+
+
+	/**
+	 * Try to log the speechlet response to the database, but fail soft.
+	 */
+	private void logSpeechletResponse(SpeechletResponse resp) {
+		try {
+			String responseJson = mapper.writeValueAsString(resp);
+			PreparedStatement ps =
+				db.prepareStatement("INSERT INTO responses(content) VALUES (?::jsonb)");
+			ps.setString(1, responseJson);
+			ps.execute();
+		} catch (JsonGenerationException e) {
+			System.out.println(e);
+		} catch (JsonMappingException e) {
+			System.out.println(e);
+		} catch (JsonProcessingException e) {
+			System.out.println(e);
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+	}
+
+
+	/**
+	 * Conversation entry point
+	 */
+	@Override
+	public SpeechletResponse respondToIntentRequest(IntentRequest intentReq, Session session) {
+		SpeechletResponse response;
+
+		if (!db.getRemoteConnection(CalendarHelper.TIME_ZONE))
+			return newInternalErrorResponse();
+
+		logIntentRequest(intentReq);
 
 		CalendarIntent intent = CalendarIntent.valueOf(intentReq);
 
@@ -207,20 +243,7 @@ public class CalendarConversation extends Conversation {
 			break;
 		}
 
-		try {
-			String responseJson = mapper.writeValueAsString(response);
-			ps = db.prepareStatement("INSERT INTO responses(content) VALUES (?::jsonb)");
-			ps.setString(1, responseJson);
-			ps.executeQuery();
-		} catch (JsonGenerationException e) {
-			System.out.println(e);
-		} catch (JsonMappingException e) {
-			System.out.println(e);
-		} catch (JsonProcessingException e) {
-			System.out.println(e);
-		} catch (SQLException e) {
-			System.out.println(e);
-		}
+		logSpeechletResponse(response);
 
 		return response;
 	}

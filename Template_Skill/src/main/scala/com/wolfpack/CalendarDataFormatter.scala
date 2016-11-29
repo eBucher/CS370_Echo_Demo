@@ -68,10 +68,10 @@ object CalendarDataFormatter {
     val eventsList = new StringBuilder(eventsLength * format.length)
     eventsList.append(s" On ${CalendarHelper.formatDateSsml(events(0).start)} there is: ")
 
-    var currentDay = events(0).start.toLocalDateTime.get(ChronoField.EPOCH_DAY)
+    var currentDay = events(0).start.toLocalDateTime.getLong(ChronoField.EPOCH_DAY)
 
     for (i <- 0 until eventsLength) {
-      val eventDay = events(i).start.toLocalDateTime.get(ChronoField.EPOCH_DAY)
+      val eventDay = events(i).start.toLocalDateTime.getLong(ChronoField.EPOCH_DAY)
       if (eventDay != currentDay) {
         val currentDateSsml = CalendarHelper.formatDateSsml(events(i).start)
         eventsList.append(s"""<break strength="strong"/> On ${currentDateSsml} there is: """)
@@ -91,8 +91,8 @@ object CalendarDataFormatter {
       // If this is the last of all the events, then it must be the last on this day.
       true
     } else {
-      val eventDay = events(index).start.toLocalDateTime.get(ChronoField.EPOCH_DAY)
-      val nextDay = events(index + 1).start.toLocalDateTime.get(ChronoField.EPOCH_DAY)
+      val eventDay = events(index).start.toLocalDateTime.getLong(ChronoField.EPOCH_DAY)
+      val nextDay = events(index + 1).start.toLocalDateTime.getLong(ChronoField.EPOCH_DAY)
       // If this day isn't the same as the next day, then this is the last on this day.
       eventDay != nextDay
     }

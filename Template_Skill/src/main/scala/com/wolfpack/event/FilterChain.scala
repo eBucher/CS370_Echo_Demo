@@ -2,20 +2,38 @@ package com.wolfpack.event
 
 import java.sql.Date
 
+import java.util.{List => JList, Map => JMap}
+
+import scala.collection.JavaConverters._
+
+
 class FilterChain(filters: List[Filter]) {
   import FilterChain._
 
-  def apply(query: EventsQuery): EventsQuery = {
-    applyFilters(filters, query)
+  def this(attrib: Object) = this(
+    Option(attrib) match {
+      case Some(objs) =>
+        val blobs = objs.asInstanceOf[JList[JMap[String, Object]]]
+        blobs.asScala.toList.map(Filter.load)
+
+      case None =>
+        List.empty
+    }
+  )
+
+  def append(filter: Filter): FilterChain = {
+    new FilterChain(filters :+ filter)
   }
+  def apply(query: EventsQuery): EventsQuery = applyFilters(filters, query)
+  def toAttrib: JList[Filter] = filters.asJava
 }
 
 object FilterChain {
   import com.wolfpack.database.{Tables, MyPostgresDriver}
   import slick.lifted.Query
 
-  import Tables._
   import MyPostgresDriver.api._
+  import Tables._
 
   type EventsQuery = Query[Events, EventsRow, Seq]
 

@@ -35,7 +35,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -107,7 +106,7 @@ public class CalendarConversation extends Conversation {
 	/** Session attribute names */
 	private enum CalendarAttrib {
 		STATE_ID("stateId"),
-		FILTER_LIST("filterList"),
+		FILTER_CHAIN("filterChain"),
 		RECENTLY_SAID_EVENTS("recentlySaidEvents");
 
 		private final String value;
@@ -274,7 +273,6 @@ public class CalendarConversation extends Conversation {
 		if (state == null)
 			return newBadStateResponse("handleStateSensitiveIntents");
 
-
 		switch (state) {
 		case USER_HEARD_EVENTS:
 			response = routeDetailIntents(intentReq, session);
@@ -358,7 +356,7 @@ public class CalendarConversation extends Conversation {
 
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
-		CalendarAttrib.removeSessionAttribute(session, CalendarAttrib.FILTER_LIST);
+		CalendarAttrib.removeSessionAttribute(session, CalendarAttrib.FILTER_CHAIN);
 
 		return newAffirmativeResponse(responseSsml, repromptSsml);
 	}
@@ -371,22 +369,16 @@ public class CalendarConversation extends Conversation {
 		if (givenDate == null)
 			return newBadSlotResponse("date");
 
-		@SuppressWarnings("unchecked")
-		java.util.List<Filter> filters =
-			(java.util.List<Filter>) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.FILTER_LIST);
-		if (filters == null)
-			filters = new ArrayList<Filter>();
-
 		DateRange dateRange = new DateRange(givenDate);
 		Filter startFilter = StartFilter.apply(dateRange.getBegin(),
 		                                       dateRange.getEnd());
-		filters.add(startFilter);
+		Object filterChainAttrib =
+			CalendarAttrib.getSessionAttribute(session, CalendarAttrib.FILTER_CHAIN);
+		FilterChain filterChain = new FilterChain(filterChainAttrib).append(startFilter);
 
 		// Select all events on the same day as the givenDate.
 		Option<List<CalendarDataSource.Event>> resultsOpt =
-			CalendarDataSource.getEventsWithFilters(filters);
-
-		// If Alexa couldn't connect to the database or run the query:
+			CalendarDataSource.getEventsWithFilterChain(filterChain);
 		if (resultsOpt.isEmpty())
 			return newInternalErrorResponse();
 
@@ -424,7 +416,7 @@ public class CalendarConversation extends Conversation {
 			response = newAffirmativeResponse(responseSsml, repromptSsml);
 		}
 
-		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.FILTER_LIST, filters);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.FILTER_CHAIN, filterChain.toAttrib());
 
 		return response;
 	}
@@ -466,18 +458,13 @@ public class CalendarConversation extends Conversation {
 
 
 	private SpeechletResponse handleNarrowDownIntent(IntentRequest intentReq, Session session, String category) {
-		@SuppressWarnings("unchecked")
-		java.util.List<Filter> filters =
-			(java.util.List<Filter>) CalendarAttrib.getSessionAttribute(session, CalendarAttrib.FILTER_LIST);
-		if (filters == null)
-			filters = new ArrayList<Filter>();
-
 		Filter categoryFilter = CategoryFilter.apply(category);
-		filters.add(categoryFilter);
+		Object filterChainAttrib =
+			CalendarAttrib.getSessionAttribute(session, CalendarAttrib.FILTER_CHAIN);
+		FilterChain filterChain = new FilterChain(filterChainAttrib).append(categoryFilter);
 
 		Option<List<CalendarDataSource.Event>> resultsOpt =
-			CalendarDataSource.getEventsWithFilters(filters);
-
+			CalendarDataSource.getEventsWithFilterChain(filterChain);
 		if (resultsOpt.isEmpty())
 			return newInternalErrorResponse();
 
@@ -498,7 +485,7 @@ public class CalendarConversation extends Conversation {
 
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.RECENTLY_SAID_EVENTS, savedEvents);
 		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.STATE_ID, SessionState.USER_HEARD_EVENTS);
-		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.FILTER_LIST, filters);
+		CalendarAttrib.setSessionAttribute(session, CalendarAttrib.FILTER_CHAIN, filterChain.toAttrib());
 
 		// Format the first part of the response to indicate the category.
 		String categoryPrefix = CalendarHelper.randomAffirmative() + ". Here are the " + category + " events that I was able to find.";

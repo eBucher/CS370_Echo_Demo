@@ -5,14 +5,14 @@ import collection.JavaConverters._
 import collection.mutable.HashMap
 
 import com.wolfpack.database.{DbCredentials, MyPostgresDriver, Tables}
-import com.wolfpack.event.{Filter, FilterChain}
+import com.wolfpack.event.FilterChain
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
 import scala.util.{Success, Failure}
 
-import java.util.{List => JList, Map => JMap}
+import java.util.{Map => JMap}
 
 import java.sql.Timestamp
 
@@ -44,9 +44,7 @@ object CalendarDataSource {
     }
   }
 
-  def getEventsWithFilters(filters: JList[Filter]): Option[List[Event]] = {
-    val filtersList = collectionAsScalaIterable(filters).toList
-    val filterChain = new FilterChain(filtersList)
+  def getEventsWithFilterChain(filterChain: FilterChain): Option[List[Event]] = {
     val query = Events.sortBy(_.start.asc)
     val filtered = filterChain(query)
     val results = filtered.map(e => (e.eventId, e.title, e.start)).result

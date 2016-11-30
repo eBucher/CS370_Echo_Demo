@@ -390,8 +390,6 @@ public class CalendarConversation extends Conversation {
 			return newFailureResponse(responseSsml, repromptSsml);
 		}
 
-		Timestamp start = (Timestamp) results.get("start").get(0);
-
 		if (numEvents <= MAX_EVENTS) {
 			Map<String, Integer> savedEvents = CalendarHelper.extractEventIds(results, numEvents);
 
